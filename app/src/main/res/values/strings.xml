@@ -1,0 +1,9 @@
+<resources>
+    <string name="add_task">Add Task</string>
+    <string name="active_tasks">Active task : %d</string>
+    <string name="queue_tasks">Queue tasks : %d</string>
+    <string name="pool_size">Pool size : %d</string>
+    <string name="max_pool_size">Max pool size : %d</string>
+    <string name="task_count">Task count : %d</string>
+    <string name="complete_tasks">Complete tasks : %d</string>
+</resources>
