@@ -4,7 +4,7 @@ android {
     compileSdkVersion 17
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.goodvin1709.example.savestateapplication"
+        applicationId "com.goodvin1709.example.taskspool"
         minSdkVersion 17
         targetSdkVersion 17
         versionCode 1

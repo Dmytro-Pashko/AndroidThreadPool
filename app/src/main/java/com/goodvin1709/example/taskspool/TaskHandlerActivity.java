@@ -1,4 +1,4 @@
-package com.goodvin1709.example.savestateapplication.threadhandlerscreen;
+package com.goodvin1709.example.taskspool;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,8 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.TextView;
-
-import com.goodvin1709.example.savestateapplication.R;
 
 import java.lang.ref.WeakReference;
 
@@ -39,11 +37,6 @@ public class TaskHandlerActivity extends Activity {
             return new TaskPool(handler);
         }
         return pool;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
     }
 
     @Override

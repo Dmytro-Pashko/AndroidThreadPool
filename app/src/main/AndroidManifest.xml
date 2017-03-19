@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.goodvin1709.example.savestateapplication">
+    package="com.goodvin1709.example.taskspool">
 
     <application
         android:icon="@mipmap/ic_launcher"
-        android:label="SaveInstance">
-
-        <activity android:name=".threadhandlerscreen.TaskHandlerActivity">
+        android:allowBackup="true"
+        android:label="@string/AppName">
+        <activity android:name="com.goodvin1709.example.taskspool.TaskHandlerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
