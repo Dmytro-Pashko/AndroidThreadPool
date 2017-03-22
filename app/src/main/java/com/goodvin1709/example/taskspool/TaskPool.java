@@ -1,20 +1,13 @@
 package com.goodvin1709.example.taskspool;
 
-import android.os.Handler;
+import android.graphics.Bitmap;
 
-class TaskPool {
+import java.util.List;
+import java.util.concurrent.Callable;
 
-    private TaskPoolExecutor executor;
+public interface TaskPool {
 
-    TaskPool(Handler handler) {
-        executor = new TaskPoolExecutor(handler);
-    }
+    void addTaskToDownloadImage(Callable<Bitmap> imageTask);
 
-    void addTask(Runnable r) {
-        executor.execute(r);
-    }
-
-    void attachHandler(Handler handler) {
-        executor.attachHandler(handler);
-    }
+    void addTaskToDownloadImageList(Callable<List<String>> imageList);
 }

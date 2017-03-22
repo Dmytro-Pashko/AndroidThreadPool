@@ -7,4 +7,6 @@
     <string name="task_count">Tasks count : %d</string>
     <string name="complete_tasks">Complete tasks : %d</string>
     <string name="AppName">ThreadPoolExample</string>
+
+    <string name="connection_error">Connection error. Please try again later</string>
 </resources>

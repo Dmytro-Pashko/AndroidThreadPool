@@ -1,6 +1,6 @@
 package com.goodvin1709.example.taskspool;
 
-class TaskFactory implements java.util.concurrent.ThreadFactory {
+public class TaskFactory implements java.util.concurrent.ThreadFactory {
 
     private static final String TASK_NAME_PREFIX = "LowPriorityTask";
     private static final int TASK_PRIORITY = 3;

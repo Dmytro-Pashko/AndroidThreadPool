@@ -8,11 +8,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.Callable;
 
-class ImageTask implements Callable<Bitmap> {
+public class ImageTask implements Callable<Bitmap> {
 
     private String url;
 
-    ImageTask(String url) {
+    public ImageTask(String url) {
         this.url = url;
     }
 
@@ -23,11 +23,11 @@ class ImageTask implements Callable<Bitmap> {
 
     private Bitmap downloadImage() {
         Bitmap bitmap = null;
-            try {
-                bitmap = BitmapFactory.decodeStream((InputStream) new URL(url).getContent());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            bitmap = BitmapFactory.decodeStream(new URL(url).openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return bitmap;
     }
 }
