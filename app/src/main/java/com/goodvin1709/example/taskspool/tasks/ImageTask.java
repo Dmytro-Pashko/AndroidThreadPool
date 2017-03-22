@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.Callable;
 
@@ -21,13 +20,7 @@ public class ImageTask implements Callable<Bitmap> {
         return downloadImage();
     }
 
-    private Bitmap downloadImage() {
-        Bitmap bitmap = null;
-        try {
-            bitmap = BitmapFactory.decodeStream(new URL(url).openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
+    private Bitmap downloadImage() throws IOException {
+        return BitmapFactory.decodeStream(new URL(url).openStream());
     }
 }

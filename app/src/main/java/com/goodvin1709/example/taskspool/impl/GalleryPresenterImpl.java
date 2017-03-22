@@ -49,11 +49,8 @@ public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener 
     }
 
     private void downloadImages() {
-        if (!imagesUrlList.isEmpty()) {
-            for (String url : imagesUrlList) {
-                pool.addTaskToDownloadImage(new ImageTask(url));
-            }
+        for (String url : imagesUrlList) {
+            pool.addTaskToDownloadImage(new ImageTask(url));
         }
     }
-
 }
