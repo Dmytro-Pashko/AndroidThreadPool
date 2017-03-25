@@ -1,13 +1,11 @@
 package com.goodvin1709.example.taskspool;
 
-import android.graphics.Bitmap;
-
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.goodvin1709.example.taskspool.tasks.ImageDownloadTask;
+import com.goodvin1709.example.taskspool.tasks.ListDownloadTask;
 
 public interface TaskPool {
 
-    void addTaskToDownloadImage(Callable<Bitmap> imageTask);
+    void addTaskToDownloadList(ListDownloadTask loadListTask);
 
-    void addTaskToDownloadImageList(Callable<List<String>> imageList);
+    void addTaskToDownloadImage(ImageDownloadTask loadListTask);
 }

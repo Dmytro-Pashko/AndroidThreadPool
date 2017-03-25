@@ -1,60 +1,46 @@
 package com.goodvin1709.example.taskspool.impl;
 
-import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 
 import com.goodvin1709.example.taskspool.DownloadListener;
+import com.goodvin1709.example.taskspool.GalleryActivity;
 import com.goodvin1709.example.taskspool.GalleryPresenter;
 import com.goodvin1709.example.taskspool.TaskPool;
-import com.goodvin1709.example.taskspool.tasks.ImageDownloadTask;
 import com.goodvin1709.example.taskspool.tasks.ListDownloadTask;
-import com.goodvin1709.example.taskspool.GalleryView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener {
 
     private TaskPool pool;
     private List<String> imagesUrlList;
-    private List<Bitmap> images;
-    private GalleryView view;
+    private Handler viewHandler;
 
-    public GalleryPresenterImpl(GalleryView view) {
-        this.view = view;
-        pool = new TaskPoolExecutor(this);
-        images = new ArrayList<Bitmap>();
+    public GalleryPresenterImpl(Handler viewHandler) {
+        this.viewHandler = viewHandler;
+        pool = new TaskPoolExecutor();
     }
 
     @Override
-    public void downloadImageList() {
-        view.showDownloadProgress();
-        pool.addTaskToDownloadImageList(new ListDownloadTask());
+    public void startDownloadImagesList() {
+        pool.addTaskToDownloadList(new ListDownloadTask(this));
+        showOnUI(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG);
     }
 
     @Override
     public void onImageListDownloaded(List<String> imageList) {
-        view.hideDownloadProgress();
         imagesUrlList = imageList;
-    }
-
-    @Override
-    public void onImageDownloaded(Bitmap image) {
-        images.add(image);
+        showOnUI(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG);
     }
 
     @Override
     public void onDownloadListError() {
-        view.hideDownloadProgress();
-        view.showConnectionError();
+        showOnUI(GalleryActivity.DOWNLOADING_ERROR);
     }
 
-    @Override
-    public void onDownloadImageError() {
-    }
-
-    private void downloadImages() {
-        for (String url : imagesUrlList) {
-            pool.addTaskToDownloadImage(new ImageDownloadTask(url));
-        }
+    private void showOnUI(int msgId) {
+        Message downloadCompleteMsg = viewHandler.obtainMessage(msgId);
+        viewHandler.sendMessage(downloadCompleteMsg);
     }
 }

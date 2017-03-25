@@ -20,8 +20,7 @@ public class DownloadDialogImpl implements DownloadDialog {
         dialog = new ProgressDialog(context);
         dialog.setTitle(R.string.download_dialog_title);
         dialog.setMessage(context.getString(R.string.download_dialog_msg));
-        //dialog.setCanceledOnTouchOutside(false);
-        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
     }
 
     @Override
