@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class ListTask implements Callable<List<String>> {
+public class ListDownloadTask implements Callable<List<String>> {
     private static final String LIST_URL = "https://raw.githubusercontent.com/goodvin1709/AndroidThreadPool/master/images/list.txt";
 
     @Override

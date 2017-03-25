@@ -6,15 +6,19 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.goodvin1709.example.taskspool.impl.GalleryPresenterImpl;
+import com.goodvin1709.example.taskspool.dialog.download.DownloadDialog;
+import com.goodvin1709.example.taskspool.dialog.download.impl.DownloadDialogImpl;
 
 public class GalleryActivity extends Activity implements GalleryView {
 
     private GalleryPresenter presenter;
+    private DownloadDialog downloadDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_thread_handler);
+        setContentView(R.layout.gallery_actvity);
+        downloadDialog = new DownloadDialogImpl(this);
         presenter = getPresenter();
         presenter.downloadImageList();
     }
@@ -22,7 +26,7 @@ public class GalleryActivity extends Activity implements GalleryView {
     private GalleryPresenter getPresenter() {
         GalleryPresenter presenter = (GalleryPresenter) getLastNonConfigurationInstance();
         if (presenter == null) {
-            return new GalleryPresenterImpl();
+            return new GalleryPresenterImpl(this);
         }
         return presenter;
     }
@@ -30,6 +34,16 @@ public class GalleryActivity extends Activity implements GalleryView {
     @Override
     public Object onRetainNonConfigurationInstance() {
         return presenter;
+    }
+
+    @Override
+    public void showDownloadProgress() {
+        downloadDialog.show();
+    }
+
+    @Override
+    public void hideDownloadProgress() {
+        downloadDialog.hide();
     }
 
     @Override

@@ -1,8 +1,7 @@
 apply plugin: 'com.android.application'
-
 android {
-    compileSdkVersion 17
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 15
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.goodvin1709.example.taskspool"
         minSdkVersion 17
@@ -16,4 +15,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+dependencies {
 }

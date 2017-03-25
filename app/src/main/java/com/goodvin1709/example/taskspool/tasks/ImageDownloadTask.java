@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 
-public class ImageTask implements Callable<Bitmap> {
+public class ImageDownloadTask implements Callable<Bitmap> {
 
     private String url;
 
-    public ImageTask(String url) {
+    public ImageDownloadTask(String url) {
         this.url = url;
     }
 
