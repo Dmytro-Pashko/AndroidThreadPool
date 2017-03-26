@@ -2,8 +2,6 @@ package com.goodvin1709.example.taskspool.impl;
 
 import com.goodvin1709.example.taskspool.TaskFactory;
 import com.goodvin1709.example.taskspool.TaskPool;
-import com.goodvin1709.example.taskspool.tasks.ImageDownloadTask;
-import com.goodvin1709.example.taskspool.tasks.ListDownloadTask;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -20,12 +18,7 @@ class TaskPoolExecutor extends ThreadPoolExecutor implements TaskPool {
     }
 
     @Override
-    public void addTaskToDownloadList(ListDownloadTask loadListTask) {
-        loadListTask.executeOnExecutor(this);
-    }
-
-    @Override
-    public void addTaskToDownloadImage(ImageDownloadTask loadImageTask) {
-        loadImageTask.executeOnExecutor(this);
+    public void addTaskToPool(Runnable task) {
+        execute(task);
     }
 }
