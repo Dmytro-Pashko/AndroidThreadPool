@@ -29,6 +29,7 @@ public class ListDownloadTask extends AsyncTask<Void, Void, Void> {
         }
         input.close();
         handler.onImageListDownloaded(list);
+        handler = null;
     }
 
     @Override
