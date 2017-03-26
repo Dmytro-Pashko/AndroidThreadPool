@@ -18,7 +18,7 @@ public class GalleryActivity extends Activity {
     public static final int DOWNLOADING_LIST_COMPLETE_MSG = 0xfb;
     public static final int DOWNLOADING_ERROR = 0xfc;
 
-    private GalleryPresenter presenter;
+    private GalleryPresenter galleryPresenter;
     private DownloadDialog downloadDialog;
     private final GalleryHandler handler = new GalleryHandler(this);
 
@@ -27,21 +27,22 @@ public class GalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_actvity);
         downloadDialog = new DownloadDialogImpl(this);
-        presenter = getPresenter();
-        presenter.startDownloadImagesList();
+        initPresenter();
     }
 
-    private GalleryPresenter getPresenter() {
+    private void initPresenter() {
         GalleryPresenter presenter = (GalleryPresenter) getLastNonConfigurationInstance();
         if (presenter == null) {
-            return new GalleryPresenterImpl(handler);
+            galleryPresenter = new GalleryPresenterImpl(handler);
+            galleryPresenter.startDownloadImagesList();
+        } else {
+            galleryPresenter.attachViewHandler(handler);
         }
-        return presenter;
     }
 
     @Override
     public Object onRetainNonConfigurationInstance() {
-        return presenter;
+        return galleryPresenter;
     }
 
     private void showDownloadProgress() {

@@ -25,22 +25,28 @@ public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener 
     @Override
     public void startDownloadImagesList() {
         pool.addTaskToDownloadList(new ListDownloadTask(this));
-        showOnUI(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG);
+        showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG);
+    }
+
+    @Override
+    public void attachViewHandler(Handler viewHandler) {
+        this.viewHandler = viewHandler;
     }
 
     @Override
     public void onImageListDownloaded(List<String> imageList) {
         imagesUrlList = imageList;
-        showOnUI(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG);
+        showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG);
     }
 
     @Override
     public void onDownloadListError() {
-        showOnUI(GalleryActivity.DOWNLOADING_ERROR);
+        showOnView(GalleryActivity.DOWNLOADING_ERROR);
     }
 
-    private void showOnUI(int msgId) {
+    private void showOnView(int msgId) {
         Message downloadCompleteMsg = viewHandler.obtainMessage(msgId);
         viewHandler.sendMessage(downloadCompleteMsg);
     }
+
 }
