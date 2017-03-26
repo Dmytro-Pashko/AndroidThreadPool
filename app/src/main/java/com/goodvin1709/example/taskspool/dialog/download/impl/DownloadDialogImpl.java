@@ -10,6 +10,7 @@ public class DownloadDialogImpl implements DownloadDialog {
 
     private Context context;
     private ProgressDialog dialog;
+    private boolean isShowing;
 
     public DownloadDialogImpl(Context context) {
         this.context = context;
@@ -27,6 +28,7 @@ public class DownloadDialogImpl implements DownloadDialog {
     public void show() {
         if (!dialog.isShowing()) {
             dialog.show();
+            isShowing = true;
         }
     }
 
@@ -34,6 +36,12 @@ public class DownloadDialogImpl implements DownloadDialog {
     public void hide() {
         if (dialog.isShowing()) {
             dialog.hide();
+            isShowing = false;
         }
+    }
+
+    @Override
+    public boolean isShowing() {
+        return isShowing;
     }
 }

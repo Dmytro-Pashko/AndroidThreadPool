@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 
 public class GalleryActivity extends Activity {
 
+    private static final String DOWNLOAD_DIALOG_STATE_KEY = "DOWNLOAD_DIALOG_STATE";
     public static final int DOWNLOADING_LIST_STARTED_MSG = 0xfa;
     public static final int DOWNLOADING_LIST_COMPLETE_MSG = 0xfb;
     public static final int DOWNLOADING_ERROR = 0xfc;
@@ -30,19 +31,34 @@ public class GalleryActivity extends Activity {
         initPresenter();
     }
 
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return galleryPresenter;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(DOWNLOAD_DIALOG_STATE_KEY, downloadDialog.isShowing());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState.getBoolean(DOWNLOAD_DIALOG_STATE_KEY)) {
+            showDownloadProgress();
+        }
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
     private void initPresenter() {
         GalleryPresenter presenter = (GalleryPresenter) getLastNonConfigurationInstance();
         if (presenter == null) {
             galleryPresenter = new GalleryPresenterImpl(handler);
             galleryPresenter.startDownloadImagesList();
         } else {
+            galleryPresenter = presenter;
             galleryPresenter.attachViewHandler(handler);
         }
-    }
-
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        return galleryPresenter;
     }
 
     private void showDownloadProgress() {

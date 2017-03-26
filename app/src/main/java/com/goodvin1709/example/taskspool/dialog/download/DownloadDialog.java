@@ -5,4 +5,6 @@ public interface DownloadDialog {
     void show();
 
     void hide();
+
+    boolean isShowing();
 }
