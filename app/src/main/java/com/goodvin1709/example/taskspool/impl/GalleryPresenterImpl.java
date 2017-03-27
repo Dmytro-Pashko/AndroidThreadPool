@@ -30,13 +30,13 @@ public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
     }
 
     @Override
-    protected void onStartLoading() {
-        startDownloadImagesList();
+    public void attachHandler(Handler handler) {
+        this.handler = handler;
     }
 
-    private void startDownloadImagesList() {
-        pool.addTaskToPool(new ListDownloadTask(this));
-        showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG);
+    @Override
+    protected void onStartLoading() {
+        startDownloadImagesList();
     }
 
     @Override
@@ -49,16 +49,21 @@ public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
         super.deliverResult(data);
     }
 
+    private void startDownloadImagesList() {
+        pool.addTaskToPool(new ListDownloadTask(this));
+        showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
+    }
+
     @Override
     public void onImageListDownloaded(List<String> imageList) {
         imagesUrlList = imageList;
-        showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG);
+        showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
         downloadImages();
     }
 
     @Override
     public void onDownloadListError() {
-        showOnView(GalleryActivity.DOWNLOADING_ERROR);
+        showOnView(GalleryActivity.CONNECTION_ERROR_MSG_ID);
     }
 
     @Override
@@ -78,10 +83,5 @@ public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
         for (String url : imagesUrlList) {
             pool.addTaskToPool(new ImageDownloadTask(url, this));
         }
-    }
-
-    @Override
-    public void attachHandler(Handler handler) {
-        this.handler = handler;
     }
 }

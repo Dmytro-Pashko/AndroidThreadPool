@@ -9,11 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 class TaskPoolExecutor extends ThreadPoolExecutor implements TaskPool {
 
-    private static final int ALIVE_THREAD_TIME_SEC = 5;
+    private static final int ALIVE_THREAD_SEC = 10;
 
     TaskPoolExecutor() {
         super(Runtime.getRuntime().availableProcessors(),
-                Runtime.getRuntime().availableProcessors() * 2, ALIVE_THREAD_TIME_SEC,
+                Runtime.getRuntime().availableProcessors() * 2, ALIVE_THREAD_SEC,
                 TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new TaskFactory());
     }
 

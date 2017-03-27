@@ -18,10 +18,10 @@ import java.util.List;
 
 public class GalleryActivity extends Activity implements LoaderManager.LoaderCallbacks<List<Bitmap>> {
 
+    public static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
+    public static final int DOWNLOADING_LIST_COMPLETE_MSG_ID = 0xfb;
+    public static final int CONNECTION_ERROR_MSG_ID = 0xfc;
     private static final String DOWNLOAD_DIALOG_STATE_KEY = "DOWNLOAD_DIALOG_STATE";
-    public static final int DOWNLOADING_LIST_STARTED_MSG = 0xfa;
-    public static final int DOWNLOADING_LIST_COMPLETE_MSG = 0xfb;
-    public static final int DOWNLOADING_ERROR = 0xfc;
     private static final int GALLERY_LOADER_ID = 0xfd;
 
     private GalleryPresenterImpl galleryLoader;
@@ -38,20 +38,6 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(DOWNLOAD_DIALOG_STATE_KEY, downloadDialog.isShowing());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState.getBoolean(DOWNLOAD_DIALOG_STATE_KEY)) {
-            showDownloadProgress();
-        }
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     public Loader<List<Bitmap>> onCreateLoader(int id, Bundle args) {
         return new GalleryPresenterImpl(this);
     }
@@ -63,6 +49,20 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<List<Bitmap>> loader) {
         galleryLoader.attachHandler(null);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(DOWNLOAD_DIALOG_STATE_KEY, downloadDialog.isShowing());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState.getBoolean(DOWNLOAD_DIALOG_STATE_KEY)) {
+            showDownloadProgress();
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void showDownloadProgress() {
@@ -88,13 +88,13 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case DOWNLOADING_LIST_STARTED_MSG:
+                case DOWNLOADING_LIST_STARTED_MSG_ID:
                     view.get().showDownloadProgress();
                     break;
-                case DOWNLOADING_LIST_COMPLETE_MSG:
+                case DOWNLOADING_LIST_COMPLETE_MSG_ID:
                     view.get().hideDownloadProgress();
                     break;
-                case DOWNLOADING_ERROR:
+                case CONNECTION_ERROR_MSG_ID:
                     view.get().showConnectionError();
                     break;
             }
