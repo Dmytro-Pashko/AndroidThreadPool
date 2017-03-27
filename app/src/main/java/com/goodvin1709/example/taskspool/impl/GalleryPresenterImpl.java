@@ -1,7 +1,7 @@
 package com.goodvin1709.example.taskspool.impl;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
@@ -15,7 +15,7 @@ import com.goodvin1709.example.taskspool.tasks.ListDownloadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
+public class GalleryPresenterImpl extends Loader<List<Bitmap>>
         implements GalleryPresenter, DownloadListener {
 
     private TaskPool pool;
@@ -37,11 +37,6 @@ public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
     @Override
     protected void onStartLoading() {
         startDownloadImagesList();
-    }
-
-    @Override
-    public List<Bitmap> loadInBackground() {
-        return images;
     }
 
     @Override
