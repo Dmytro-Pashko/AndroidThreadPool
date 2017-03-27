@@ -49,6 +49,12 @@ public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
         super.deliverResult(data);
     }
 
+    @Override
+    protected void onStopLoading() {
+        pool.stopAll();
+        super.onStopLoading();
+    }
+
     private void startDownloadImagesList() {
         pool.addTaskToPool(new ListDownloadTask(this));
         showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
