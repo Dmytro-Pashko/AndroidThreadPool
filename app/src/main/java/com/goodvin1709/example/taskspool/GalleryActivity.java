@@ -1,6 +1,9 @@
 package com.goodvin1709.example.taskspool;
 
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -11,15 +14,17 @@ import com.goodvin1709.example.taskspool.dialog.download.impl.DownloadDialogImpl
 import com.goodvin1709.example.taskspool.impl.GalleryPresenterImpl;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
-public class GalleryActivity extends Activity {
+public class GalleryActivity extends Activity implements LoaderManager.LoaderCallbacks<List<Bitmap>> {
 
     private static final String DOWNLOAD_DIALOG_STATE_KEY = "DOWNLOAD_DIALOG_STATE";
     public static final int DOWNLOADING_LIST_STARTED_MSG = 0xfa;
     public static final int DOWNLOADING_LIST_COMPLETE_MSG = 0xfb;
     public static final int DOWNLOADING_ERROR = 0xfc;
+    private static final int GALLERY_LOADER_ID = 0xfd;
 
-    private GalleryPresenter galleryPresenter;
+    private GalleryPresenterImpl galleryLoader;
     private DownloadDialog downloadDialog;
     private final GalleryHandler handler = new GalleryHandler(this);
 
@@ -28,12 +33,8 @@ public class GalleryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_actvity);
         downloadDialog = new DownloadDialogImpl(this);
-        initPresenter();
-    }
-
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        return galleryPresenter;
+        galleryLoader = (GalleryPresenterImpl) getLoaderManager().initLoader(GALLERY_LOADER_ID, null, this);
+        galleryLoader.attachHandler(handler);
     }
 
     @Override
@@ -50,15 +51,18 @@ public class GalleryActivity extends Activity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    private void initPresenter() {
-        GalleryPresenter presenter = (GalleryPresenter) getLastNonConfigurationInstance();
-        if (presenter == null) {
-            galleryPresenter = new GalleryPresenterImpl(handler);
-            galleryPresenter.startDownloadImagesList();
-        } else {
-            galleryPresenter = presenter;
-            galleryPresenter.attachViewHandler(handler);
-        }
+    @Override
+    public Loader<List<Bitmap>> onCreateLoader(int id, Bundle args) {
+        return new GalleryPresenterImpl(this);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Bitmap>> loader, List<Bitmap> data) {
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Bitmap>> loader) {
+        galleryLoader.attachHandler(null);
     }
 
     private void showDownloadProgress() {

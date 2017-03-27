@@ -1,8 +1,9 @@
 package com.goodvin1709.example.taskspool.impl;
 
+import android.content.AsyncTaskLoader;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.os.Message;
 
 import com.goodvin1709.example.taskspool.DownloadListener;
 import com.goodvin1709.example.taskspool.GalleryActivity;
@@ -14,28 +15,38 @@ import com.goodvin1709.example.taskspool.tasks.ListDownloadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener {
+public class GalleryPresenterImpl extends AsyncTaskLoader<List<Bitmap>>
+        implements GalleryPresenter, DownloadListener {
 
     private TaskPool pool;
     private List<String> imagesUrlList;
     private List<Bitmap> images;
-    private Handler viewHandler;
+    private Handler handler;
 
-    public GalleryPresenterImpl(Handler viewHandler) {
-        this.viewHandler = viewHandler;
+    public GalleryPresenterImpl(Context context) {
+        super(context);
         images = new ArrayList<Bitmap>();
         pool = new TaskPoolExecutor();
     }
 
     @Override
-    public void startDownloadImagesList() {
+    protected void onStartLoading() {
+        startDownloadImagesList();
+    }
+
+    private void startDownloadImagesList() {
         pool.addTaskToPool(new ListDownloadTask(this));
         showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG);
     }
 
     @Override
-    public void attachViewHandler(Handler viewHandler) {
-        this.viewHandler = viewHandler;
+    public List<Bitmap> loadInBackground() {
+        return images;
+    }
+
+    @Override
+    public void deliverResult(List<Bitmap> data) {
+        super.deliverResult(data);
     }
 
     @Override
@@ -57,12 +68,10 @@ public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener 
 
     @Override
     public void onDownloadImageError(String url) {
-
     }
 
     private void showOnView(int msgId) {
-        Message downloadCompleteMsg = viewHandler.obtainMessage(msgId);
-        viewHandler.sendMessage(downloadCompleteMsg);
+        handler.sendMessage(handler.obtainMessage(msgId));
     }
 
     private void downloadImages() {
@@ -71,4 +80,8 @@ public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener 
         }
     }
 
+    @Override
+    public void attachHandler(Handler handler) {
+        this.handler = handler;
+    }
 }
