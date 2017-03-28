@@ -5,6 +5,7 @@ import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
+import com.goodvin1709.example.taskspool.Dimensions;
 import com.goodvin1709.example.taskspool.DownloadListener;
 import com.goodvin1709.example.taskspool.GalleryActivity;
 import com.goodvin1709.example.taskspool.GalleryPresenter;
@@ -82,7 +83,7 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
 
     private void downloadImages() {
         for (String url : imagesUrlList) {
-            pool.addTaskToPool(new ImageDownloadTask(url, this));
+            pool.addTaskToPool(new ImageDownloadTask(url, new Dimensions(100,100),this));
         }
     }
 }
