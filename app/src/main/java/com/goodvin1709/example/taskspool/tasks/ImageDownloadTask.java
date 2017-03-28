@@ -1,13 +1,11 @@
 package com.goodvin1709.example.taskspool.tasks;
 
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.goodvin1709.example.taskspool.Dimensions;
 import com.goodvin1709.example.taskspool.DownloadListener;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 public class ImageDownloadTask implements Runnable {
