@@ -1,4 +1,4 @@
-package com.goodvin1709.example.taskspool.dialog.download;
+package com.goodvin1709.corgigallery.dialog.download;
 
 public interface DownloadDialog {
 

@@ -1,7 +1,7 @@
-package com.goodvin1709.example.taskspool.impl;
+package com.goodvin1709.corgigallery.impl;
 
-import com.goodvin1709.example.taskspool.TaskFactory;
-import com.goodvin1709.example.taskspool.TaskPool;
+import com.goodvin1709.corgigallery.TaskFactory;
+import com.goodvin1709.corgigallery.TaskPool;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;

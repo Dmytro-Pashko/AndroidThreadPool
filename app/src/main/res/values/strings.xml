@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">Corgi Gallery</string>
-    <string name="download_dialog_title">Downloading</string>
+    <string name="app_name">Corgi gallery</string>
+    <string name="download_dialog_title">Downloading…</string>
     <string name="download_dialog_msg">Corgi are loading.Please wait…</string>
-    <string name="connection_error">Connection error. Please try again later</string>
+    <string name="connection_error">Connection error. Please try again later…</string>
 </resources>

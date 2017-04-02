@@ -1,17 +1,17 @@
-package com.goodvin1709.example.taskspool.impl;
+package com.goodvin1709.corgigallery.impl;
 
 import android.content.Context;
 import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.Handler;
 
-import com.goodvin1709.example.taskspool.Dimensions;
-import com.goodvin1709.example.taskspool.DownloadListener;
-import com.goodvin1709.example.taskspool.GalleryActivity;
-import com.goodvin1709.example.taskspool.GalleryPresenter;
-import com.goodvin1709.example.taskspool.TaskPool;
-import com.goodvin1709.example.taskspool.tasks.ImageDownloadTask;
-import com.goodvin1709.example.taskspool.tasks.ListDownloadTask;
+import com.goodvin1709.corgigallery.DownloadListener;
+import com.goodvin1709.corgigallery.GalleryActivity;
+import com.goodvin1709.corgigallery.GalleryPresenter;
+import com.goodvin1709.corgigallery.Image;
+import com.goodvin1709.corgigallery.TaskPool;
+import com.goodvin1709.corgigallery.tasks.ImageDownloadTask;
+import com.goodvin1709.corgigallery.tasks.ListDownloadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +21,23 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
 
     private TaskPool pool;
     private List<String> imagesUrlList;
-    private List<Bitmap> images;
+    private List<Image> images;
     private Handler handler;
 
     public GalleryPresenterImpl(Context context) {
         super(context);
-        images = new ArrayList<Bitmap>();
+        images = new ArrayList<Image>();
         pool = new TaskPoolExecutor();
     }
 
     @Override
     public void attachHandler(Handler handler) {
         this.handler = handler;
+    }
+
+    @Override
+    public List<Image> getImages() {
+        return images;
     }
 
     @Override
@@ -69,8 +74,9 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
     }
 
     @Override
-    public void onImageDownloaded(Bitmap image) {
+    public void onImageDownloaded(Image image) {
         images.add(image);
+        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     @Override
@@ -83,7 +89,7 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
 
     private void downloadImages() {
         for (String url : imagesUrlList) {
-            pool.addTaskToPool(new ImageDownloadTask(url, new Dimensions(100,100),this));
+            pool.addTaskToPool(new ImageDownloadTask(url, 300, 300, this));
         }
     }
 }

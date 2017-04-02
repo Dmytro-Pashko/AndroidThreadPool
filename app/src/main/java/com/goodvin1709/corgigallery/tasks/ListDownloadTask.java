@@ -1,6 +1,6 @@
-package com.goodvin1709.example.taskspool.tasks;
+package com.goodvin1709.corgigallery.tasks;
 
-import com.goodvin1709.example.taskspool.DownloadListener;
+import com.goodvin1709.corgigallery.DownloadListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,10 +1,10 @@
-package com.goodvin1709.example.taskspool.dialog.download.impl;
+package com.goodvin1709.corgigallery.dialog.download.impl;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.goodvin1709.example.taskspool.R;
-import com.goodvin1709.example.taskspool.dialog.download.DownloadDialog;
+import com.goodvin1709.corgigallery.R;
+import com.goodvin1709.corgigallery.dialog.download.DownloadDialog;
 
 public class DownloadDialogImpl implements DownloadDialog {
 
