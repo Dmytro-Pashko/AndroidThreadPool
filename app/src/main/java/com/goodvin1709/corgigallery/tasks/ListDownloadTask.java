@@ -1,6 +1,7 @@
 package com.goodvin1709.corgigallery.tasks;
 
 import com.goodvin1709.corgigallery.DownloadListener;
+import com.goodvin1709.corgigallery.Image;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,10 +30,10 @@ public class ListDownloadTask implements Runnable {
     private void downloadList() throws IOException {
         URL url = new URL(LIST_URL);
         BufferedReader input = new BufferedReader(new InputStreamReader(url.openStream()));
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<Image> list = new ArrayList<Image>();
         String line;
         while ((line = input.readLine()) != null) {
-            list.add(line);
+            list.add(new Image(line));
         }
         input.close();
         handler.onImageListDownloaded(list);

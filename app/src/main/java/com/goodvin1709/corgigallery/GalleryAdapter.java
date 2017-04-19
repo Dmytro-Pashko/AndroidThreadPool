@@ -3,11 +3,11 @@ package com.goodvin1709.corgigallery;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
+import com.goodvin1709.CorgiGallery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +16,15 @@ class GalleryAdapter extends BaseAdapter {
 
     private Context context;
     private List<Image> images;
+    private GalleryPresenter presenter;
 
     GalleryAdapter(Context context) {
         this.context = context;
-        this.images = new ArrayList<Image>();
+        images = new ArrayList<Image>();
+        presenter = ((CorgiGallery) context.getApplicationContext()).getPresenter();
     }
 
-    void updateList(List<Image> images) {
+    void addImages(List<Image> images) {
         this.images = images;
         notifyDataSetChanged();
     }
@@ -44,17 +46,23 @@ class GalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView image;
+        ImageView view;
+        Image image = images.get(position);
         int imageSize = parent.getWidth() / ((GridView) parent).getNumColumns();
         if (convertView == null) {
-            image = new ImageView(context);
-            image.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
-            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            view = new ImageView(context);
+            view.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
+            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
         } else {
-            image = (ImageView) convertView;
-            image.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
+            view = (ImageView) convertView;
+            view.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
         }
-        image.setImageBitmap(images.get(position).getBitmap());
-        return image;
+        if (image.getBitmap() == null) {
+            presenter.loadBitmap(image,imageSize,imageSize);
+            view.setImageDrawable(context.getResources().getDrawable(R.drawable.download_load));
+        } else {
+            view.setImageBitmap(image.getBitmap());
+        }
+        return view;
     }
 }

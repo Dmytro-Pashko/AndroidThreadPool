@@ -1,68 +1,54 @@
 package com.goodvin1709.corgigallery;
 
 import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.Loader;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.goodvin1709.CorgiGallery;
 import com.goodvin1709.corgigallery.dialog.download.DownloadDialog;
 import com.goodvin1709.corgigallery.dialog.download.impl.DownloadDialogImpl;
-import com.goodvin1709.corgigallery.impl.GalleryPresenterImpl;
 
 import java.lang.ref.WeakReference;
-import java.util.List;
 
-public class GalleryActivity extends Activity implements LoaderManager.LoaderCallbacks<List<Bitmap>> {
+public class GalleryActivity extends Activity {
 
     public static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
     public static final int DOWNLOADING_LIST_COMPLETE_MSG_ID = 0xfb;
     public static final int CONNECTION_ERROR_MSG_ID = 0xfc;
     public static final int GALLERY_IMAGES_UPDATED = 0xfe;
     private static final String DOWNLOAD_DIALOG_STATE_KEY = "DOWNLOAD_DIALOG_STATE";
-    private static final int GALLERY_LOADER_ID = 0xfd;
 
-    private GalleryPresenter galleryLoader;
     private DownloadDialog downloadDialog;
-    private GridView container;
-    private GalleryAdapter adapter;
+    private GalleryAdapter galleryAdapter;
+    private GalleryPresenter presenter;
     private final GalleryHandler handler = new GalleryHandler(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_activity);
-        container = (GridView) findViewById(R.id.imagesGridContainer);
-        adapter = new GalleryAdapter(this);
-        container.setAdapter(adapter);
+        GridView galleryView = (GridView) findViewById(R.id.imagesGridContainer);
+        galleryAdapter = new GalleryAdapter(this);
+        galleryView.setAdapter(galleryAdapter);
+        presenter = ((CorgiGallery) getApplicationContext()).getPresenter();
+        presenter.attachHandler(handler);
         downloadDialog = new DownloadDialogImpl(this);
-        galleryLoader = (GalleryPresenterImpl) getLoaderManager().initLoader(GALLERY_LOADER_ID, null, this);
-        galleryLoader.attachHandler(handler);
-        adapter.updateList(galleryLoader.getImages());
-    }
-
-    @Override
-    public Loader<List<Bitmap>> onCreateLoader(int id, Bundle args) {
-        return new GalleryPresenterImpl(this);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<Bitmap>> loader, List<Bitmap> data) {
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<Bitmap>> loader) {
-        galleryLoader.attachHandler(null);
+        galleryAdapter.addImages(presenter.getImages());
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(DOWNLOAD_DIALOG_STATE_KEY, downloadDialog.isShowing());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        downloadDialog.destroy();
+        super.onDestroy();
     }
 
     @Override
@@ -79,6 +65,7 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
 
     private void hideDownloadProgress() {
         downloadDialog.hide();
+        galleryAdapter.addImages(presenter.getImages());
     }
 
     private void showConnectionError() {
@@ -86,8 +73,8 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
         Toast.makeText(this, R.string.connection_error, Toast.LENGTH_SHORT).show();
     }
 
-    private void updateGallery() {
-        adapter.updateList(galleryLoader.getImages());
+    private void imagesUpdated() {
+        galleryAdapter.notifyDataSetChanged();
     }
 
     private static class GalleryHandler extends Handler {
@@ -110,7 +97,9 @@ public class GalleryActivity extends Activity implements LoaderManager.LoaderCal
                     view.get().showConnectionError();
                     break;
                 case GALLERY_IMAGES_UPDATED:
-                    view.get().updateGallery();
+                    view.get().imagesUpdated();
+                    break;
+                default:
                     break;
             }
         }

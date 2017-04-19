@@ -1,8 +1,5 @@
 package com.goodvin1709.corgigallery.impl;
 
-import android.content.Context;
-import android.content.Loader;
-import android.graphics.Bitmap;
 import android.os.Handler;
 
 import com.goodvin1709.corgigallery.DownloadListener;
@@ -16,16 +13,13 @@ import com.goodvin1709.corgigallery.tasks.ListDownloadTask;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryPresenterImpl extends Loader<List<Bitmap>>
-        implements GalleryPresenter, DownloadListener {
+public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener {
 
     private TaskPool pool;
-    private List<String> imagesUrlList;
     private List<Image> images;
     private Handler handler;
 
-    public GalleryPresenterImpl(Context context) {
-        super(context);
+    public GalleryPresenterImpl() {
         images = new ArrayList<Image>();
         pool = new TaskPoolExecutor();
     }
@@ -37,23 +31,15 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
 
     @Override
     public List<Image> getImages() {
+        if (images.isEmpty()) {
+            startDownloadImagesList();
+        }
         return images;
     }
 
     @Override
-    protected void onStartLoading() {
-        startDownloadImagesList();
-    }
-
-    @Override
-    public void deliverResult(List<Bitmap> data) {
-        super.deliverResult(data);
-    }
-
-    @Override
-    protected void onStopLoading() {
-        pool.stopAll();
-        super.onStopLoading();
+    public void loadBitmap(Image image, int height, int width) {
+        pool.addTaskToPool(new ImageDownloadTask(image, height, width, this));
     }
 
     private void startDownloadImagesList() {
@@ -62,10 +48,9 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
     }
 
     @Override
-    public void onImageListDownloaded(List<String> imageList) {
-        imagesUrlList = imageList;
+    public void onImageListDownloaded(List<Image> images) {
+        this.images = images;
         showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
-        downloadImages();
     }
 
     @Override
@@ -75,21 +60,15 @@ public class GalleryPresenterImpl extends Loader<List<Bitmap>>
 
     @Override
     public void onImageDownloaded(Image image) {
-        images.add(image);
         showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     @Override
-    public void onDownloadImageError(String url) {
+    public void onDownloadImageError(Image image) {
+        //TODO image set broken icon.
     }
 
     private void showOnView(int msgId) {
         handler.sendMessage(handler.obtainMessage(msgId));
-    }
-
-    private void downloadImages() {
-        for (String url : imagesUrlList) {
-            pool.addTaskToPool(new ImageDownloadTask(url, 300, 300, this));
-        }
     }
 }

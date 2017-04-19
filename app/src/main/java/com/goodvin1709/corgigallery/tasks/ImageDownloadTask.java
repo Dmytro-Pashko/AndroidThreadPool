@@ -11,12 +11,13 @@ import java.net.URL;
 
 public class ImageDownloadTask implements Runnable {
 
-    private String url;
+    private Image image;
     private DownloadListener handler;
-    private int outHeight, outWidth;
+    private int outHeight;
+    private int outWidth;
 
-    public ImageDownloadTask(String url, int outHeight, int outWidth, DownloadListener handler) {
-        this.url = url;
+    public ImageDownloadTask(Image image, int outHeight, int outWidth, DownloadListener handler) {
+        this.image = image;
         this.handler = handler;
         this.outHeight = outHeight;
         this.outWidth = outWidth;
@@ -27,7 +28,7 @@ public class ImageDownloadTask implements Runnable {
         try {
             downloadImage();
         } catch (IOException e) {
-            handler.onDownloadImageError(url);
+            handler.onDownloadImageError(image);
             handler = null;
         }
     }
@@ -38,13 +39,13 @@ public class ImageDownloadTask implements Runnable {
         decodeBitmap(options);
         options.inSampleSize = getScale(options);
         options.inJustDecodeBounds = false;
-        Image image = new Image(url, decodeBitmap(options));
+        image.setBitmap(decodeBitmap(options));
         handler.onImageDownloaded(image);
         handler = null;
     }
 
     private Bitmap decodeBitmap(BitmapFactory.Options options) throws IOException {
-        return BitmapFactory.decodeStream(new URL(url).openStream(), null, options);
+        return BitmapFactory.decodeStream(new URL(image.getUrl()).openStream(), null, options);
     }
 
     private int getScale(BitmapFactory.Options options) {

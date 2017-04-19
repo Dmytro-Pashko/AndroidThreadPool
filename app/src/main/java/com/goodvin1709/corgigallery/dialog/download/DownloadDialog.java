@@ -7,4 +7,6 @@ public interface DownloadDialog {
     void hide();
 
     boolean isShowing();
+
+    void destroy();
 }

@@ -7,6 +7,10 @@ public class Image {
     private String url;
     private Bitmap bitmap;
 
+    public Image(String url) {
+        this.url = url;
+    }
+
     public Image(String url, Bitmap bitmap) {
         this.url = url;
         this.bitmap = bitmap;
@@ -16,7 +20,11 @@ public class Image {
         return url;
     }
 
-    public Bitmap getBitmap() {
+    Bitmap getBitmap() {
         return bitmap;
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 }

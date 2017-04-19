@@ -9,4 +9,8 @@ public interface GalleryPresenter {
     void attachHandler(Handler handler);
 
     List<Image> getImages();
+
+    void loadBitmap(Image image, int height, int width);
+
+
 }

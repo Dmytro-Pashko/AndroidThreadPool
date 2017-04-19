@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface DownloadListener {
 
-    void onImageListDownloaded(List<String> urlList);
+    void onImageListDownloaded(List<Image> images);
 
     void onDownloadListError();
 
     void onImageDownloaded(Image image);
 
-    void onDownloadImageError(String url);
+    void onDownloadImageError(Image image);
 }

@@ -40,8 +40,14 @@ public class DownloadDialogImpl implements DownloadDialog {
         }
     }
 
+
     @Override
     public boolean isShowing() {
         return isShowing;
+    }
+
+    @Override
+    public void destroy() {
+        context = null;
     }
 }
