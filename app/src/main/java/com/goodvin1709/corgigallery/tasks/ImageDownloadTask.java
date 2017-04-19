@@ -13,14 +13,12 @@ public class ImageDownloadTask implements Runnable {
 
     private Image image;
     private DownloadListener handler;
-    private int outHeight;
-    private int outWidth;
+    private int size;
 
-    public ImageDownloadTask(Image image, int outHeight, int outWidth, DownloadListener handler) {
+    public ImageDownloadTask(Image image, int size, DownloadListener handler) {
         this.image = image;
         this.handler = handler;
-        this.outHeight = outHeight;
-        this.outWidth = outWidth;
+        this.size = size;
     }
 
     @Override
@@ -52,9 +50,9 @@ public class ImageDownloadTask implements Runnable {
         final int height = options.outHeight;
         final int width = options.outWidth;
         if (height > width) {
-            return Math.round((float) height / (float) outHeight);
+            return Math.round((float) height / (float) size);
         } else {
-            return Math.round((float) width / (float) outWidth);
+            return Math.round((float) width / (float) size);
         }
     }
 }

@@ -1,8 +1,7 @@
-package com.goodvin1709;
+package com.goodvin1709.corgigallery;
 
 import android.app.Application;
 
-import com.goodvin1709.corgigallery.GalleryPresenter;
 import com.goodvin1709.corgigallery.impl.GalleryPresenterImpl;
 
 public class CorgiGallery extends Application {

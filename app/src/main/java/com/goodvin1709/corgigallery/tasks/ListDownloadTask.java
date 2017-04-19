@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class ListDownloadTask implements Runnable {
 
-    private static final String LIST_URL = "https://raw.githubusercontent.com/goodvin1709/AndroidThreadPool/master/images/list.txt";
+    private static final String LIST_URL = "https://raw.githubusercontent.com/goodvin1709/AndroidThreadPool/develop/images/list.txt";
     private DownloadListener handler;
 
     public ListDownloadTask(DownloadListener handler) {

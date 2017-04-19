@@ -9,8 +9,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.goodvin1709.CorgiGallery;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,18 +55,17 @@ class GalleryAdapter extends BaseAdapter {
             view.image = (ImageView) convertView.findViewById(R.id.image);
             view.progressBar = (ProgressBar) convertView.findViewById(R.id.image_progress_view);
             convertView.setTag(view);
+            convertView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
         } else {
             view = (ImageViewHolder) convertView.getTag();
         }
-        convertView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
-        setImageIntoView(image, view);
+        setImageIntoView(image, view, imageSize);
         return convertView;
     }
 
-    private void setImageIntoView(Image image, ImageViewHolder viewHolder) {
+    private void setImageIntoView(Image image, ImageViewHolder viewHolder, int imageSize) {
         if (image.getBitmap() == null) {
-            presenter.loadBitmap(image, viewHolder.image.getHeight(),
-                    viewHolder.image.getWidth());
+            presenter.loadBitmap(image, imageSize);
         } else {
             viewHolder.image.setImageBitmap(image.getBitmap());
             viewHolder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);

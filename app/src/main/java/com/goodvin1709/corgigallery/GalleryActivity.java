@@ -7,7 +7,6 @@ import android.os.Message;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.goodvin1709.CorgiGallery;
 import com.goodvin1709.corgigallery.dialog.download.DownloadDialog;
 import com.goodvin1709.corgigallery.dialog.download.impl.DownloadDialogImpl;
 
@@ -48,6 +47,7 @@ public class GalleryActivity extends Activity {
     @Override
     protected void onDestroy() {
         downloadDialog.destroy();
+        downloadDialog = null;
         super.onDestroy();
     }
 

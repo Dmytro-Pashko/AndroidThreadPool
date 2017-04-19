@@ -10,7 +10,7 @@ public interface GalleryPresenter {
 
     List<Image> getImages();
 
-    void loadBitmap(Image image, int height, int width);
+    void loadBitmap(Image image, int imageSize);
 
 
 }

@@ -38,8 +38,8 @@ public class GalleryPresenterImpl implements GalleryPresenter, DownloadListener 
     }
 
     @Override
-    public void loadBitmap(Image image, int height, int width) {
-        pool.addTaskToPool(new ImageDownloadTask(image, height, width, this));
+    public void loadBitmap(Image image, int imageSize) {
+        pool.addTaskToPool(new ImageDownloadTask(image, imageSize, this));
     }
 
     private void startDownloadImagesList() {
