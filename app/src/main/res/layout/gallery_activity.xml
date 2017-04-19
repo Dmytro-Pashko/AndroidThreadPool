@@ -8,7 +8,6 @@
         android:id="@+id/imagesGridContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:numColumns="@integer/gallery_portrait_column_count"
         android:stretchMode="columnWidth" />
 </LinearLayout>

@@ -1,11 +1,13 @@
 package com.goodvin1709.corgigallery;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.goodvin1709.CorgiGallery;
 
@@ -14,14 +16,14 @@ import java.util.List;
 
 class GalleryAdapter extends BaseAdapter {
 
-    private Context context;
     private List<Image> images;
     private GalleryPresenter presenter;
+    private LayoutInflater inflater;
 
     GalleryAdapter(Context context) {
-        this.context = context;
         images = new ArrayList<Image>();
         presenter = ((CorgiGallery) context.getApplicationContext()).getPresenter();
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     void addImages(List<Image> images) {
@@ -46,23 +48,36 @@ class GalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView view;
+        ImageViewHolder view;
         Image image = images.get(position);
         int imageSize = parent.getWidth() / ((GridView) parent).getNumColumns();
         if (convertView == null) {
-            view = new ImageView(context);
-            view.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
-            view.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            convertView = inflater.inflate(R.layout.image_loading_view, parent, false);
+            view = new ImageViewHolder();
+            view.image = (ImageView) convertView.findViewById(R.id.image);
+            view.progressBar = (ProgressBar) convertView.findViewById(R.id.image_progress_view);
+            convertView.setTag(view);
         } else {
-            view = (ImageView) convertView;
-            view.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
+            view = (ImageViewHolder) convertView.getTag();
         }
+        convertView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
+        setImageIntoView(image, view);
+        return convertView;
+    }
+
+    private void setImageIntoView(Image image, ImageViewHolder viewHolder) {
         if (image.getBitmap() == null) {
-            presenter.loadBitmap(image,imageSize,imageSize);
-            view.setImageDrawable(context.getResources().getDrawable(R.drawable.download_load));
+            presenter.loadBitmap(image, viewHolder.image.getHeight(),
+                    viewHolder.image.getWidth());
         } else {
-            view.setImageBitmap(image.getBitmap());
+            viewHolder.image.setImageBitmap(image.getBitmap());
+            viewHolder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            viewHolder.progressBar.setVisibility(View.GONE);
         }
-        return view;
+    }
+
+    private static class ImageViewHolder {
+        ImageView image;
+        ProgressBar progressBar;
     }
 }
