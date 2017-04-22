@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 android {
     compileSdkVersion 15
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.goodvin1709.example.taskspool"
         minSdkVersion 17
-        targetSdkVersion 17
+        targetSdkVersion 15
         versionCode 1
         versionName "1.0"
     }

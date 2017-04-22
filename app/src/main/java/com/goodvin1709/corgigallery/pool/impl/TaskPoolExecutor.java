@@ -21,9 +21,4 @@ public class TaskPoolExecutor extends ThreadPoolExecutor implements TaskPool {
     public void addTaskToPool(Runnable task) {
         execute(task);
     }
-
-    @Override
-    public void stopAll() {
-        shutdownNow();
-    }
 }

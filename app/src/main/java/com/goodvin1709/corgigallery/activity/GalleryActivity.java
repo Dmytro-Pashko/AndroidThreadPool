@@ -14,17 +14,14 @@ import com.goodvin1709.corgigallery.activity.dialog.DownloadDialog;
 import com.goodvin1709.corgigallery.activity.dialog.impl.DownloadDialogImpl;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 
-import java.lang.ref.WeakReference;
-
 public class GalleryActivity extends Activity {
 
-    public static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
+    private static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
     public static final int DOWNLOADING_LIST_COMPLETE_MSG_ID = 0xfb;
     public static final int CONNECTION_ERROR_MSG_ID = 0xfc;
     public static final int GALLERY_IMAGES_UPDATED = 0xfe;
 
     private DownloadDialog downloadDialog;
-    private GridView galleryView;
     private GalleryAdapter galleryAdapter;
     private GalleryController controller;
     private RelativeLayout connectionErrorContainer;
@@ -36,7 +33,7 @@ public class GalleryActivity extends Activity {
         setContentView(R.layout.gallery_activity);
         controller = ((CorgiGallery) getApplicationContext()).getPresenter();
         controller.attachHandler(handler);
-        galleryView = (GridView) findViewById(R.id.images_grid_container);
+        GridView galleryView = (GridView) findViewById(R.id.images_grid_container);
         connectionErrorContainer = (RelativeLayout) findViewById(R.id.connection_error_container);
         downloadDialog = new DownloadDialogImpl(this);
         galleryAdapter = new GalleryAdapter(this);
@@ -67,51 +64,49 @@ public class GalleryActivity extends Activity {
         connectionErrorContainer.setVisibility(View.GONE);
     }
 
-    private void onDownloadingStarted() {
-        downloadDialog.show();
-    }
-
-    private void onDownloadFinished() {
-        downloadDialog.hide();
-        galleryAdapter.addImages(controller.getImages());
-    }
-
-    private void showConnectionError() {
-        downloadDialog.hide();
-        showConnectionErrorContainer();
-    }
-
-    private void onImagesUpdated() {
-        if (galleryAdapter != null) {
-            galleryAdapter.notifyDataSetChanged();
-        }
-    }
-
     private static class GalleryHandler extends Handler {
-        private final WeakReference<GalleryActivity> view;
+        private final GalleryActivity view;
 
         GalleryHandler(GalleryActivity view) {
-            this.view = new WeakReference<GalleryActivity>(view);
+            this.view = view;
         }
 
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case DOWNLOADING_LIST_STARTED_MSG_ID:
-                    view.get().onDownloadingStarted();
+                    onDownloadingStarted();
                     break;
                 case DOWNLOADING_LIST_COMPLETE_MSG_ID:
-                    view.get().onDownloadFinished();
+                    onDownloadFinished();
                     break;
                 case CONNECTION_ERROR_MSG_ID:
-                    view.get().showConnectionError();
+                    showConnectionError();
                     break;
                 case GALLERY_IMAGES_UPDATED:
-                    view.get().onImagesUpdated();
+                    onImagesUpdated();
                     break;
                 default:
                     break;
             }
+        }
+
+        private void onDownloadingStarted() {
+            view.downloadDialog.show();
+        }
+
+        private void onDownloadFinished() {
+            view.downloadDialog.hide();
+            view.galleryAdapter.addImages(view.controller.getImages());
+        }
+
+        private void showConnectionError() {
+            view.downloadDialog.hide();
+            view.showConnectionErrorContainer();
+        }
+
+        private void onImagesUpdated() {
+            view.galleryAdapter.notifyDataSetChanged();
         }
     }
 }

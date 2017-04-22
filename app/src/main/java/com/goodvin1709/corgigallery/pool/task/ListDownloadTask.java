@@ -36,7 +36,7 @@ public class ListDownloadTask implements Runnable {
             list.add(new Image(line));
         }
         input.close();
-        handler.onImageListDownloaded(list);
+        handler.onListDownloaded(list);
         handler = null;
     }
 }

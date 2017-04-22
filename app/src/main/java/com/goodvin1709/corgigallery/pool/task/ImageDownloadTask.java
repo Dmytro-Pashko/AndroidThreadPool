@@ -11,9 +11,9 @@ import java.net.URL;
 
 public class ImageDownloadTask implements Runnable {
 
-    private Image image;
+    private final Image image;
     private DownloadListener handler;
-    private int size;
+    private final int size;
 
     public ImageDownloadTask(Image image, int size, DownloadListener handler) {
         this.image = image;
@@ -26,7 +26,6 @@ public class ImageDownloadTask implements Runnable {
         try {
             downloadImage();
         } catch (IOException e) {
-            handler.onDownloadImageError(image);
             handler = null;
         }
     }

@@ -19,7 +19,7 @@ public class GalleryPresenterImpl implements GalleryController, DownloadListener
 
     private ControllerStatus status;
 
-    private TaskPool pool;
+    private final TaskPool pool;
     private List<Image> images;
     private Handler handler;
 
@@ -66,12 +66,12 @@ public class GalleryPresenterImpl implements GalleryController, DownloadListener
     }
 
     @Override
-    public void loadBitmap(Image image, int imageSize) {
-        pool.addTaskToPool(new ImageDownloadTask(image, imageSize, this));
+    public void getBitmap(Image image, int size) {
+        pool.addTaskToPool(new ImageDownloadTask(image, size, this));
     }
 
     @Override
-    public void onImageListDownloaded(List<Image> images) {
+    public void onListDownloaded(List<Image> images) {
         this.images = images;
         status = ControllerStatus.LOADED;
         showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
@@ -90,10 +90,6 @@ public class GalleryPresenterImpl implements GalleryController, DownloadListener
 
     private void startDownloadImagesList() {
         pool.addTaskToPool(new ListDownloadTask(this));
-    }
-
-    @Override
-    public void onDownloadImageError(Image image) {
     }
 
     private void showOnView(int msgId) {

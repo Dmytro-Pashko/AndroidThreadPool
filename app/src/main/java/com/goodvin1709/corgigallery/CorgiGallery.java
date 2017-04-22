@@ -7,7 +7,7 @@ import com.goodvin1709.corgigallery.controller.impl.GalleryPresenterImpl;
 
 public class CorgiGallery extends Application {
 
-    private GalleryController presenter;
+    private final GalleryController presenter;
 
     public CorgiGallery() {
         presenter = new GalleryPresenterImpl();

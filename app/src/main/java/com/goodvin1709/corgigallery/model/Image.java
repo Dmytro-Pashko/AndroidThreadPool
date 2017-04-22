@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 public class Image {
 
-    private String url;
+    private final String url;
     private Bitmap bitmap;
 
     public Image(String url) {

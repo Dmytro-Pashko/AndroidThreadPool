@@ -20,8 +20,8 @@ import java.util.List;
 class GalleryAdapter extends BaseAdapter {
 
     private List<Image> images;
-    private GalleryController presenter;
-    private LayoutInflater inflater;
+    private final GalleryController presenter;
+    private final LayoutInflater inflater;
 
     GalleryAdapter(Context context) {
         images = new ArrayList<Image>();
@@ -70,7 +70,7 @@ class GalleryAdapter extends BaseAdapter {
 
     private void setImageIntoView(Image image, ImageViewHolder viewHolder, int imageSize) {
         if (image.getBitmap() == null) {
-            presenter.loadBitmap(image, imageSize);
+            presenter.getBitmap(image, imageSize);
         } else {
             viewHolder.image.setImageBitmap(image.getBitmap());
             viewHolder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
