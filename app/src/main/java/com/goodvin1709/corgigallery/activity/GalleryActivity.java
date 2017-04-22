@@ -16,7 +16,7 @@ import com.goodvin1709.corgigallery.controller.GalleryController;
 
 public class GalleryActivity extends Activity {
 
-    private static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
+    public static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
     public static final int DOWNLOADING_LIST_COMPLETE_MSG_ID = 0xfb;
     public static final int CONNECTION_ERROR_MSG_ID = 0xfc;
     public static final int GALLERY_IMAGES_UPDATED = 0xfe;

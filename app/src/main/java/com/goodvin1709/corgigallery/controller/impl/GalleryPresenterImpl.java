@@ -40,7 +40,6 @@ public class GalleryPresenterImpl implements GalleryController, DownloadListener
     @Override
     public void loadURLList() {
         if (!isLoadingList()) {
-            status = ControllerStatus.LOADING;
             startDownloadImagesList();
         }
     }
@@ -89,6 +88,8 @@ public class GalleryPresenterImpl implements GalleryController, DownloadListener
     }
 
     private void startDownloadImagesList() {
+        status = ControllerStatus.LOADING;
+        showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
         pool.addTaskToPool(new ListDownloadTask(this));
     }
 
