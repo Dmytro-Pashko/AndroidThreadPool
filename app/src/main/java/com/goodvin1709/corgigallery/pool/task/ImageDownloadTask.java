@@ -1,10 +1,10 @@
-package com.goodvin1709.corgigallery.tasks;
+package com.goodvin1709.corgigallery.pool.task;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.goodvin1709.corgigallery.DownloadListener;
-import com.goodvin1709.corgigallery.Image;
+import com.goodvin1709.corgigallery.controller.DownloadListener;
+import com.goodvin1709.corgigallery.model.Image;
 
 import java.io.IOException;
 import java.net.URL;

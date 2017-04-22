@@ -1,4 +1,4 @@
-package com.goodvin1709.corgigallery;
+package com.goodvin1709.corgigallery.activity;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,13 +9,18 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.goodvin1709.corgigallery.CorgiGallery;
+import com.goodvin1709.corgigallery.controller.GalleryController;
+import com.goodvin1709.corgigallery.model.Image;
+import com.goodvin1709.corgigallery.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class GalleryAdapter extends BaseAdapter {
 
     private List<Image> images;
-    private GalleryPresenter presenter;
+    private GalleryController presenter;
     private LayoutInflater inflater;
 
     GalleryAdapter(Context context) {

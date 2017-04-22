@@ -1,4 +1,4 @@
-package com.goodvin1709.corgigallery;
+package com.goodvin1709.corgigallery.model;
 
 import android.graphics.Bitmap;
 
@@ -11,16 +11,11 @@ public class Image {
         this.url = url;
     }
 
-    public Image(String url, Bitmap bitmap) {
-        this.url = url;
-        this.bitmap = bitmap;
-    }
-
     public String getUrl() {
         return url;
     }
 
-    Bitmap getBitmap() {
+    public Bitmap getBitmap() {
         return bitmap;
     }
 

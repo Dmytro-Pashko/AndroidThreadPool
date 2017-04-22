@@ -1,4 +1,6 @@
-package com.goodvin1709.corgigallery;
+package com.goodvin1709.corgigallery.controller;
+
+import com.goodvin1709.corgigallery.model.Image;
 
 import java.util.List;
 

@@ -1,13 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <GridView
-        android:id="@+id/imagesGridContainer"
+        android:id="@+id/images_grid_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:numColumns="@integer/gallery_portrait_column_count"
         android:stretchMode="columnWidth" />
-</LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/connection_error_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/connection_error_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text="@string/connection_error_msg" />
+
+        <Button
+            android:id="@+id/connection_error_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/connection_error_text"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="24dp"
+            android:onClick="onRetryDownloadClicked"
+            android:text="@string/connection_error_btn" />
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.goodvin1709.corgigallery;
+package com.goodvin1709.corgigallery.pool;
 
 public interface TaskPool {
 

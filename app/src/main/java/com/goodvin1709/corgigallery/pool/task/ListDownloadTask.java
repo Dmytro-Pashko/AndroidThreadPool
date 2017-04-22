@@ -1,7 +1,7 @@
-package com.goodvin1709.corgigallery.tasks;
+package com.goodvin1709.corgigallery.pool.task;
 
-import com.goodvin1709.corgigallery.DownloadListener;
-import com.goodvin1709.corgigallery.Image;
+import com.goodvin1709.corgigallery.controller.DownloadListener;
+import com.goodvin1709.corgigallery.model.Image;
 
 import java.io.BufferedReader;
 import java.io.IOException;
