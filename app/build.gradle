@@ -3,19 +3,16 @@ android {
     compileSdkVersion 15
     buildToolsVersion '25.0.2'
     defaultConfig {
-        applicationId "com.goodvin1709.example.taskspool"
+        applicationId "com.goodvin1709.corgigallery"
         minSdkVersion 17
         targetSdkVersion 15
         versionCode 1
-        versionName "1.0"
+        versionName "1.2"
     }
     buildTypes {
         debug {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
-
-dependencies {
 }
