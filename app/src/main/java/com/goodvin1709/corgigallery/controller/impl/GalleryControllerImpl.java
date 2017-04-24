@@ -116,23 +116,23 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
 
     @Override
     public void onImageCached(Image image) {
-        Log.d(TAG, String.format("Image saved to cache %s", image.getUrl()));
+        Log.d(TAG, String.format("Image %s saved to cache.", image.getUrl()));
         showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     @Override
     public void onSaveCacheError(Image image) {
-        Log.d(TAG, String.format("Error while saving image to cache %s", image.getUrl()));
+        Log.d(TAG, String.format("Error while saving image %s to cache.", image.getUrl()));
     }
 
     @Override
     public void onLoadCacheError(Image image) {
-        Log.d(TAG, String.format("Error while loading image from cache %s", image.getUrl()));
+        Log.d(TAG, String.format("Error while loading image %s from cache.", image.getUrl()));
     }
 
     @Override
     public void onImageLoadedFromCache(Image image) {
-        Log.d(TAG, String.format("Image loaded from cache into view %s", image.getUrl()));
+        Log.d(TAG, String.format("Image %s loaded from cache.", image.getUrl()));
         showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
