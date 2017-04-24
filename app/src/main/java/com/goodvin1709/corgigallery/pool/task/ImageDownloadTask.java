@@ -13,6 +13,7 @@ import java.net.URLConnection;
 public class ImageDownloadTask implements Runnable {
 
     private static final int CONNECTION_TIMEOUT = 10000;
+    private static final long MAX_FILE_SIZE = 2000000; // Max file size 2 MB.
     private Image image;
     private DownloadListener handler;
 
@@ -25,8 +26,13 @@ public class ImageDownloadTask implements Runnable {
         URL url = new URL(image.getUrl());
         URLConnection connection = url.openConnection();
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
-        Bitmap bitmap = BitmapFactory.decodeStream(connection.getInputStream());
-        handler.onImageDownloaded(image, bitmap);
+        connection.connect();
+        if (connection.getContentLength() < MAX_FILE_SIZE) {
+            Bitmap bitmap = BitmapFactory.decodeStream(connection.getInputStream());
+            handler.onImageDownloaded(image, bitmap);
+        } else {
+            handler.onDownloadImageError(image);
+        }
     }
 
     @Override
