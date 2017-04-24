@@ -1,6 +1,7 @@
 package com.goodvin1709.corgigallery.controller;
 
 import android.os.Handler;
+import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.model.Image;
 
@@ -20,5 +21,5 @@ public interface GalleryController {
 
     List<Image> getImages();
 
-    void getBitmap(Image image, int size);
+    void loadImage(Image image, ImageView view);
 }

@@ -1,25 +1,23 @@
 package com.goodvin1709.corgigallery.model;
 
-import android.graphics.Bitmap;
-
 public class Image {
 
     private final String url;
-    private Bitmap bitmap;
+    private boolean isBroken;
 
     public Image(String url) {
         this.url = url;
     }
 
+    public void setBroken(boolean broken) {
+        isBroken = broken;
+    }
+
+    public boolean isBroken() {
+        return isBroken;
+    }
+
     public String getUrl() {
         return url;
-    }
-
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
     }
 }

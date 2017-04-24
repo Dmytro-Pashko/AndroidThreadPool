@@ -11,14 +11,17 @@ import java.net.URL;
 
 public class ImageDownloadTask implements Runnable {
 
-    private final Image image;
+    private Image image;
     private DownloadListener handler;
-    private final int size;
 
-    public ImageDownloadTask(Image image, int size, DownloadListener handler) {
-        this.image = image;
+    public ImageDownloadTask(Image image, DownloadListener handler) {
         this.handler = handler;
-        this.size = size;
+        this.image = image;
+    }
+
+    private void downloadImage() throws IOException {
+        Bitmap bitmap = BitmapFactory.decodeStream(new URL(image.getUrl()).openStream());
+        handler.onImageDownloaded(image, bitmap);
     }
 
     @Override
@@ -26,32 +29,7 @@ public class ImageDownloadTask implements Runnable {
         try {
             downloadImage();
         } catch (IOException e) {
-            handler = null;
-        }
-    }
-
-    private void downloadImage() throws IOException {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        decodeBitmap(options);
-        options.inSampleSize = getScale(options);
-        options.inJustDecodeBounds = false;
-        image.setBitmap(decodeBitmap(options));
-        handler.onImageDownloaded(image);
-        handler = null;
-    }
-
-    private Bitmap decodeBitmap(BitmapFactory.Options options) throws IOException {
-        return BitmapFactory.decodeStream(new URL(image.getUrl()).openStream(), null, options);
-    }
-
-    private int getScale(BitmapFactory.Options options) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        if (height > width) {
-            return Math.round((float) height / (float) size);
-        } else {
-            return Math.round((float) width / (float) size);
+            handler.onDownloadImageError(image);
         }
     }
 }

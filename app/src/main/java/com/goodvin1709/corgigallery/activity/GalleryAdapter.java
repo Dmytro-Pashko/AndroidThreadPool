@@ -61,22 +61,14 @@ class GalleryAdapter extends BaseAdapter {
             view.progressBar = (ProgressBar) convertView.findViewById(R.id.image_progress_view);
             convertView.setTag(view);
             convertView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
+            presenter.loadImage(image, view.image);
+            view.progressBar.setVisibility(View.GONE);
         } else {
             view = (ImageViewHolder) convertView.getTag();
         }
-        setImageIntoView(image, view, imageSize);
         return convertView;
     }
 
-    private void setImageIntoView(Image image, ImageViewHolder viewHolder, int imageSize) {
-        if (image.getBitmap() == null) {
-            presenter.getBitmap(image, imageSize);
-        } else {
-            viewHolder.image.setImageBitmap(image.getBitmap());
-            viewHolder.image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            viewHolder.progressBar.setVisibility(View.GONE);
-        }
-    }
 
     private static class ImageViewHolder {
         ImageView image;
