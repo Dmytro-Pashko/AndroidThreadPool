@@ -8,15 +8,14 @@
         android:id="@+id/images_grid_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:numColumns="@integer/gallery_landscape_column_count"
         android:stretchMode="columnWidth" />
 
     <RelativeLayout
         android:id="@+id/connection_error_container"
         android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/connection_error_text"

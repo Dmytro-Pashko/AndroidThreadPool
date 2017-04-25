@@ -1,18 +1,15 @@
 package com.goodvin1709.corgigallery.activity;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.goodvin1709.corgigallery.CorgiGallery;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 import com.goodvin1709.corgigallery.model.Image;
-import com.goodvin1709.corgigallery.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +18,12 @@ class GalleryAdapter extends BaseAdapter {
 
     private List<Image> images;
     private final GalleryController presenter;
-    private final LayoutInflater inflater;
+    private Context context;
 
     GalleryAdapter(Context context) {
+        this.context = context;
         images = new ArrayList<Image>();
         presenter = ((CorgiGallery) context.getApplicationContext()).getPresenter();
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     void addImages(List<Image> images) {
@@ -51,27 +48,18 @@ class GalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageViewHolder view;
+        ImageView imageView;
         Image image = images.get(position);
         int imageSize = parent.getWidth() / ((GridView) parent).getNumColumns();
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.image_loading_view, parent, false);
-            view = new ImageViewHolder();
-            view.image = (ImageView) convertView.findViewById(R.id.image);
-            view.progressBar = (ProgressBar) convertView.findViewById(R.id.image_progress_view);
-            convertView.setTag(view);
-            convertView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
-            presenter.loadImage(image, view.image);
-            view.progressBar.setVisibility(View.GONE);
+            imageView = new ImageView(context);
+            imageView.setPadding(4, 4, 4, 4);
+            imageView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
         } else {
-            view = (ImageViewHolder) convertView.getTag();
+            imageView = (ImageView) convertView;
         }
-        return convertView;
+        presenter.loadImage(image, imageView);
+        return imageView;
     }
 
-
-    private static class ImageViewHolder {
-        ImageView image;
-        ProgressBar progressBar;
-    }
 }

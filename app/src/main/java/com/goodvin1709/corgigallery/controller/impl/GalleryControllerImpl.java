@@ -16,8 +16,6 @@ import com.goodvin1709.corgigallery.pool.TaskPool;
 import com.goodvin1709.corgigallery.pool.impl.TaskPoolExecutor;
 import com.goodvin1709.corgigallery.pool.task.ImageDownloadTask;
 import com.goodvin1709.corgigallery.pool.task.ListDownloadTask;
-import com.goodvin1709.corgigallery.pool.task.LoadFromCacheTask;
-import com.goodvin1709.corgigallery.pool.task.SaveToCacheTask;
 import com.goodvin1709.corgigallery.utils.CacheUtils;
 import com.goodvin1709.corgigallery.utils.impl.CacheUtilsImpl;
 
@@ -28,7 +26,6 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
 
     private static final String TAG = "GalleryController";
 
-    private Context context;
     private ControllerStatus status;
     private final TaskPool pool;
     private List<Image> images;
@@ -36,8 +33,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     private CacheUtils cache;
 
     public GalleryControllerImpl(Context context) {
-        this.context = context;
-        cache = new CacheUtilsImpl(context);
+        cache = new CacheUtilsImpl(context, this);
         images = new ArrayList<Image>();
         pool = new TaskPoolExecutor();
         status = ControllerStatus.CREATED;
@@ -81,7 +77,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void loadImage(Image image, ImageView view) {
         if (cache.isCached(image)) {
-            pool.addTaskToPool(new LoadFromCacheTask(context, image, view, this));
+            cache.loadBitmapFromCache(image, view);
         } else {
             pool.addTaskToPool(new ImageDownloadTask(image, this));
         }
@@ -105,7 +101,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onImageDownloaded(Image image, Bitmap bitmap) {
         Log.d(TAG, String.format("Image %s downloaded.", image.getUrl()));
-        pool.addTaskToPool(new SaveToCacheTask(context, image, bitmap, this));
+        cache.saveBitmapToCache(image, bitmap);
     }
 
     @Override
@@ -133,7 +129,6 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onImageLoadedFromCache(Image image) {
         Log.d(TAG, String.format("Image %s loaded from cache.", image.getUrl()));
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     private void startDownloadImagesList() {

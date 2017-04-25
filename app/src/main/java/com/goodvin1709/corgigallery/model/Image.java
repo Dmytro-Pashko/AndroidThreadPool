@@ -9,15 +9,15 @@ public class Image {
         this.url = url;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     public void setBroken(boolean broken) {
         isBroken = broken;
     }
 
     public boolean isBroken() {
         return isBroken;
-    }
-
-    public String getUrl() {
-        return url;
     }
 }
