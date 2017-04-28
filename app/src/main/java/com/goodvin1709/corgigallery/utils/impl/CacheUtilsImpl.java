@@ -30,7 +30,7 @@ public class CacheUtilsImpl implements CacheUtils {
     public CacheUtilsImpl(CacheListener handler) {
         this.handler = handler;
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 4;
+        final int cacheSize = maxMemory / 2;
         imageLruCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap value) {

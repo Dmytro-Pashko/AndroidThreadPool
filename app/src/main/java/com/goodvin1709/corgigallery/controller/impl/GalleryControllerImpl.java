@@ -1,6 +1,5 @@
 package com.goodvin1709.corgigallery.controller.impl;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.widget.ImageView;
