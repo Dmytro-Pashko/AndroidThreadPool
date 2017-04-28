@@ -17,13 +17,13 @@ import java.util.List;
 class GalleryAdapter extends BaseAdapter {
 
     private List<Image> images;
-    private final GalleryController presenter;
+    private final GalleryController controller;
     private Context context;
 
     GalleryAdapter(Context context) {
         this.context = context;
         images = new ArrayList<Image>();
-        presenter = ((CorgiGallery) context.getApplicationContext()).getPresenter();
+        controller = ((CorgiGallery) context.getApplicationContext()).getPresenter();
     }
 
     void addImages(List<Image> images) {
@@ -55,10 +55,11 @@ class GalleryAdapter extends BaseAdapter {
             imageView = new ImageView(context);
             imageView.setPadding(4, 4, 4, 4);
             imageView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            controller.loadImage(image, imageView);
         } else {
             imageView = (ImageView) convertView;
         }
-        presenter.loadImage(image, imageView);
         return imageView;
     }
 

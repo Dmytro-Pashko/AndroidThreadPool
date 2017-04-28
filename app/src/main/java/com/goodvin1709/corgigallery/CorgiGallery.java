@@ -10,7 +10,7 @@ public class CorgiGallery extends Application {
     private final GalleryController presenter;
 
     public CorgiGallery() {
-        presenter = new GalleryControllerImpl(this);
+        presenter = new GalleryControllerImpl();
     }
 
     public GalleryController getPresenter() {

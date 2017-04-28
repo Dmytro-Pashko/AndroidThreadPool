@@ -1,11 +1,13 @@
 package com.goodvin1709.corgigallery.pool.task;
 
-import android.util.Log;
+import android.graphics.BitmapFactory;
 
 import com.goodvin1709.corgigallery.controller.DownloadListener;
 import com.goodvin1709.corgigallery.model.Image;
+import com.goodvin1709.corgigallery.utils.Logger;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -13,9 +15,9 @@ import java.net.URLConnection;
 
 public class ImageDownloadTask implements Runnable {
 
-    private static final String TAG = "ImageDownloadTask";
     private static final int CONNECTION_TIMEOUT = 10000;
-    private static final long MAX_FILE_SIZE = 2000000;
+    private static final long MAX_FILE_SIZE = 4194304 * 2; // 2^23 = 8MB
+    private static final int FREQUENCY_UPDATE_PERCENT = 10;
     private static final int BUFFER_SIZE = 8192;
     private Image image;
     private DownloadListener handler;
@@ -28,6 +30,7 @@ public class ImageDownloadTask implements Runnable {
     @Override
     public void run() {
         try {
+            Logger.log("Started downloading Image[%s]", image.getUrl());
             downloadImage();
         } catch (IOException e) {
             handler.onDownloadImageError(image);
@@ -42,26 +45,32 @@ public class ImageDownloadTask implements Runnable {
         int length = connection.getContentLength();
         if (length < MAX_FILE_SIZE) {
             readData(connection);
-            //handler.onImageDownloaded(image, bitmap);
         } else {
+            Logger.log("Download image[%s] cancelled, file size is too long.", image.getUrl());
             handler.onDownloadImageError(image);
         }
     }
 
     private void readData(URLConnection connection) throws IOException {
-        InputStream stream = new BufferedInputStream(connection.getInputStream(), BUFFER_SIZE);
-        int total, count;
-        byte data[] = new byte[1024];
-        while ((count = stream.read(data)) != -1) {
-            total=+count;
-            int progress = (total * 100) / connection.getContentLength();
+        InputStream inputStream = new BufferedInputStream(connection.getInputStream(), BUFFER_SIZE);
+        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+        int minIncrement = (connection.getContentLength() / 100) * FREQUENCY_UPDATE_PERCENT;
+        int total = 0;
+        int count;
+        byte data[] = new byte[connection.getContentLength()];
+        while ((count = inputStream.read(data, 0, minIncrement)) != -1) {
+            total += count;
+            outStream.write(data, 0, count);
+            int progress = (int) ((total * 100f) / connection.getContentLength());
             onDownloadProgressChanged(progress);
         }
-        stream.close();
+        handler.onImageDownloaded(image,
+                BitmapFactory.decodeByteArray(outStream.toByteArray(), 0, data.length));
+        inputStream.close();
+        outStream.close();
     }
 
-
     private void onDownloadProgressChanged(int progress) {
-        Log.d(TAG, String.format("Downloading progress changed Image %s, Progress =%d", image.getUrl(), progress));
+        //Logger.log("Downloading progress changed Image[%s], Progress=%d%%", image.getUrl(), progress);
     }
 }

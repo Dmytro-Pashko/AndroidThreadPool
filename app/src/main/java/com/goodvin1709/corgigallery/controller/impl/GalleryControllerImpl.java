@@ -3,7 +3,6 @@ package com.goodvin1709.corgigallery.controller.impl;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.activity.GalleryActivity;
@@ -12,11 +11,13 @@ import com.goodvin1709.corgigallery.controller.ControllerStatus;
 import com.goodvin1709.corgigallery.controller.DownloadListener;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 import com.goodvin1709.corgigallery.model.Image;
+import com.goodvin1709.corgigallery.model.ImageStatus;
 import com.goodvin1709.corgigallery.pool.TaskPool;
 import com.goodvin1709.corgigallery.pool.impl.TaskPoolExecutor;
 import com.goodvin1709.corgigallery.pool.task.ImageDownloadTask;
 import com.goodvin1709.corgigallery.pool.task.ListDownloadTask;
 import com.goodvin1709.corgigallery.utils.CacheUtils;
+import com.goodvin1709.corgigallery.utils.Logger;
 import com.goodvin1709.corgigallery.utils.impl.CacheUtilsImpl;
 
 import java.util.ArrayList;
@@ -24,16 +25,14 @@ import java.util.List;
 
 public class GalleryControllerImpl implements GalleryController, DownloadListener, CacheListener {
 
-    private static final String TAG = "GalleryController";
-
     private ControllerStatus status;
     private final TaskPool pool;
     private List<Image> images;
     private Handler handler;
     private CacheUtils cache;
 
-    public GalleryControllerImpl(Context context) {
-        cache = new CacheUtilsImpl(context, this);
+    public GalleryControllerImpl() {
+        cache = new CacheUtilsImpl(this);
         images = new ArrayList<Image>();
         pool = new TaskPoolExecutor();
         status = ControllerStatus.CREATED;
@@ -78,64 +77,69 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     public void loadImage(Image image, ImageView view) {
         if (cache.isCached(image)) {
             cache.loadBitmapFromCache(image, view);
-        } else {
+        } else if (image.getStatus() != ImageStatus.LOADING) {
+            image.setStatus(ImageStatus.LOADING);
             pool.addTaskToPool(new ImageDownloadTask(image, this));
         }
     }
 
     @Override
     public void onListDownloaded(List<Image> images) {
-        Log.d(TAG, "Image list has been downloaded.");
-        this.images = images;
         status = ControllerStatus.LOADED;
+        this.images = images;
+        Logger.log("List of Images has been downloaded [%d images].", images.size());
         showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
     }
 
     @Override
     public void onDownloadListError() {
-        Log.d(TAG, "Error while downloading image list.");
         status = ControllerStatus.CONNECTION_ERROR;
         showOnView(GalleryActivity.CONNECTION_ERROR_MSG_ID);
+        Logger.log("Error while downloading image list.");
     }
 
     @Override
     public void onImageDownloaded(Image image, Bitmap bitmap) {
-        Log.d(TAG, String.format("Image %s downloaded.", image.getUrl()));
+        image.setStatus(ImageStatus.LOADED);
         cache.saveBitmapToCache(image, bitmap);
+        Logger.log("Image[%s] downloaded.", image.getUrl());
     }
 
     @Override
     public void onDownloadImageError(Image image) {
-        Log.d(TAG, String.format("Error while downloading image %s", image.getUrl()));
-        image.setBroken(true);
+        image.setStatus(ImageStatus.LOADING_ERROR);
+        Logger.log("Error while downloading Image[%s]", image.getUrl());
     }
 
     @Override
     public void onImageCached(Image image) {
-        Log.d(TAG, String.format("Image %s saved to cache.", image.getUrl()));
+        image.setStatus(ImageStatus.CACHED);
         showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     @Override
     public void onSaveCacheError(Image image) {
-        Log.d(TAG, String.format("Error while saving image %s to cache.", image.getUrl()));
+        image.setStatus(ImageStatus.CACHED_ERROR);
+        Logger.log("Error while saving image %s to cache.", image.getUrl());
     }
 
     @Override
     public void onLoadCacheError(Image image) {
-        Log.d(TAG, String.format("Error while loading image %s from cache.", image.getUrl()));
+        image.setStatus(ImageStatus.CACHED_ERROR);
+        Logger.log("Error while loading Image[%s] from cache.", image.getUrl());
     }
 
     @Override
     public void onImageLoadedFromCache(Image image) {
-        Log.d(TAG, String.format("Image %s loaded from cache.", image.getUrl()));
+        image.setStatus(ImageStatus.IDLE);
+        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     private void startDownloadImagesList() {
-        Log.d(TAG, "Started downloading image list.");
         status = ControllerStatus.LOADING;
-        showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
         pool.addTaskToPool(new ListDownloadTask(this));
+        Logger.log("Started downloading image list.");
+        showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
     }
 
     private void showOnView(int msgId) {

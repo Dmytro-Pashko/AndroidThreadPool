@@ -3,7 +3,7 @@ package com.goodvin1709.corgigallery.model;
 public class Image {
 
     private final String url;
-    private boolean isBroken;
+    private ImageStatus status;
 
     public Image(String url) {
         this.url = url;
@@ -13,11 +13,11 @@ public class Image {
         return url;
     }
 
-    public void setBroken(boolean broken) {
-        isBroken = broken;
+    public ImageStatus getStatus() {
+        return status;
     }
 
-    public boolean isBroken() {
-        return isBroken;
+    public void setStatus(ImageStatus status) {
+        this.status = status;
     }
 }
