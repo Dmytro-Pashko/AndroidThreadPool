@@ -3,6 +3,7 @@ package com.goodvin1709.corgigallery.utils.impl;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
@@ -118,17 +119,13 @@ public class CacheUtilsImpl implements CacheUtils {
     }
 
     private int getScale(BitmapFactory.Options options, int reqHeight, int reqWidth) {
+        Logger.log("Edited msg.");
         final int height = options.outHeight;
         final int width = options.outWidth;
-        int inSampleSize = 1;
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
+        if (height > width) {
+            return Math.round((float) height / (float) reqHeight);
+        } else {
+            return Math.round((float) width / (float) reqWidth);
         }
-        return inSampleSize;
     }
 }
