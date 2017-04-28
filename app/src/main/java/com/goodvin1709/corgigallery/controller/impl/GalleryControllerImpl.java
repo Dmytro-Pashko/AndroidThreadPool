@@ -103,6 +103,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
         image.setStatus(ImageStatus.LOADED);
         cache.saveBitmapToCache(image, bitmap);
         Logger.log("Image[%s] downloaded.", image.getUrl());
+        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     @Override
@@ -114,7 +115,6 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onImageCached(Image image) {
         image.setStatus(ImageStatus.CACHED);
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     @Override
@@ -132,7 +132,6 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onImageLoadedFromCache(Image image) {
         image.setStatus(ImageStatus.IDLE);
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
     }
 
     private void startDownloadImagesList() {

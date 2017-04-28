@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.LruCache;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.controller.CacheListener;
@@ -28,7 +29,7 @@ public class CacheUtilsImpl implements CacheUtils {
     public CacheUtilsImpl(CacheListener handler) {
         this.handler = handler;
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
+        final int cacheSize = maxMemory / 4;
         imageLruCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
@@ -64,8 +65,9 @@ public class CacheUtilsImpl implements CacheUtils {
 
     @Override
     public void loadBitmapFromCache(Image image, ImageView view) {
-        Bitmap bitmap = loadBitmap(image, view);
+        Bitmap bitmap = loadBitmap(image, view.getLayoutParams().height,view.getLayoutParams().width);
         view.setImageBitmap(bitmap);
+        view.setVisibility(View.VISIBLE);
         handler.onImageLoadedFromCache(image);
     }
 
@@ -84,13 +86,13 @@ public class CacheUtilsImpl implements CacheUtils {
         file.createNewFile();
     }
 
-    private Bitmap loadBitmap(Image image, ImageView view) {
+    private Bitmap loadBitmap(Image image, int height, int width) {
         Bitmap bitmap = imageLruCache.get(image.getUrl());
         if (bitmap == null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             loadBitmapFromExternalCache(options, image);
-            options.inSampleSize = getScale(options, view);
+            options.inSampleSize = getScale(options, height, width);
             options.inJustDecodeBounds = false;
             bitmap = loadBitmapFromExternalCache(options, image);
             Logger.log("Image[%s] loaded from external cache.", image.getUrl());
@@ -115,13 +117,18 @@ public class CacheUtilsImpl implements CacheUtils {
         return null;
     }
 
-    private int getScale(BitmapFactory.Options options, ImageView view) {
+    private int getScale(BitmapFactory.Options options, int reqHeight, int reqWidth) {
         final int height = options.outHeight;
         final int width = options.outWidth;
-        if (height > width) {
-            return Math.round((float) height / (float) view.getLayoutParams().height);
-        } else {
-            return Math.round((float) width / (float) view.getLayoutParams().width);
+        int inSampleSize = 1;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
         }
+        return inSampleSize;
     }
 }

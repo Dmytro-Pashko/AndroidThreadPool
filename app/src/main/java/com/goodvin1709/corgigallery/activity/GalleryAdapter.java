@@ -1,13 +1,17 @@
 package com.goodvin1709.corgigallery.activity;
 
-import android.content.Context;
+import android.app.Activity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.goodvin1709.corgigallery.CorgiGallery;
+import com.goodvin1709.corgigallery.R;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 import com.goodvin1709.corgigallery.model.Image;
 
@@ -18,12 +22,12 @@ class GalleryAdapter extends BaseAdapter {
 
     private List<Image> images;
     private final GalleryController controller;
-    private Context context;
+    private LayoutInflater inflater;
 
-    GalleryAdapter(Context context) {
-        this.context = context;
+    GalleryAdapter(Activity activity) {
+        inflater = activity.getLayoutInflater();
         images = new ArrayList<Image>();
-        controller = ((CorgiGallery) context.getApplicationContext()).getPresenter();
+        controller = ((CorgiGallery) activity.getApplicationContext()).getPresenter();
     }
 
     void addImages(List<Image> images) {
@@ -48,19 +52,25 @@ class GalleryAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
-        Image image = images.get(position);
-        int imageSize = parent.getWidth() / ((GridView) parent).getNumColumns();
+        ImageHolder holder;
+        int size = parent.getWidth() / ((GridView) parent).getNumColumns();
         if (convertView == null) {
-            imageView = new ImageView(context);
-            imageView.setPadding(4, 4, 4, 4);
-            imageView.setLayoutParams(new GridView.LayoutParams(imageSize, imageSize));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            controller.loadImage(image, imageView);
+            convertView = inflater.inflate(R.layout.image_loading_view, parent, false);
+            holder = new ImageHolder();
+            convertView.setLayoutParams(new ViewGroup.LayoutParams(size,size));
+            holder.image = (ImageView) convertView.findViewById(R.id.image_image_view);
+            holder.image.setLayoutParams(new RelativeLayout.LayoutParams(size,size));
+            convertView.setTag(holder);
         } else {
-            imageView = (ImageView) convertView;
+            holder = (ImageHolder) convertView.getTag();
         }
-        return imageView;
+        controller.loadImage(images.get(position), holder.image);
+        return convertView;
+    }
+
+    private static class ImageHolder {
+        ImageView image;
+        ProgressBar progress;
     }
 
 }
