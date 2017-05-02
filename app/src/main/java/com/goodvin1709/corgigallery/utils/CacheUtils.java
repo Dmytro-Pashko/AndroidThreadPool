@@ -7,10 +7,12 @@ import com.goodvin1709.corgigallery.model.Image;
 
 public interface CacheUtils {
 
-    boolean isCached(Image image);
+    boolean isCachedInMemory(Image image);
 
-    void saveBitmapToCache(Image image, Bitmap bitmap);
+    boolean isCachedInExternal(Image image);
 
-    void loadBitmapFromCache(Image image, ImageView view);
+    void saveBitmapToMemoryCache(Image image, Bitmap bitmap);
+
+    void loadBitmapFromMemoryCache(Image image, ImageView view);
 
 }
