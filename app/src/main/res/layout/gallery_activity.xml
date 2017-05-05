@@ -7,9 +7,26 @@
     <GridView
         android:id="@+id/images_grid_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:alwaysDrawnWithCache="false"
+        android:animateLayoutChanges="false"
+        android:animationCache="false"
+        android:drawSelectorOnTop="false"
+        android:duplicateParentState="true"
+        android:fadeScrollbars="false"
+        android:horizontalSpacing="1dp"
+        android:isScrollContainer="true"
         android:numColumns="@integer/gallery_portrait_column_count"
-        android:stretchMode="columnWidth" />
+        android:overScrollMode="never"
+        android:scrollbarAlwaysDrawHorizontalTrack="false"
+        android:scrollbarDefaultDelayBeforeFade="2000"
+        android:scrollbarFadeDuration="500"
+        android:scrollingCache="true"
+        android:smoothScrollbar="true"
+        android:splitMotionEvents="false"
+        android:stackFromBottom="false"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="1dp" />
 
     <RelativeLayout
         android:id="@+id/connection_error_container"

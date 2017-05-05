@@ -1,6 +1,7 @@
 package com.goodvin1709.corgigallery.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,14 +22,14 @@ import java.util.List;
 
 class GalleryAdapter extends BaseAdapter {
 
-    private List<Image> images;
     private final GalleryController controller;
+    private List<Image> images;
     private LayoutInflater inflater;
 
-    GalleryAdapter(Activity activity) {
-        inflater = activity.getLayoutInflater();
+    GalleryAdapter(Context context) {
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         images = new ArrayList<Image>();
-        controller = ((CorgiGallery) activity.getApplicationContext()).getPresenter();
+        controller = ((CorgiGallery) context.getApplicationContext()).getPresenter();
     }
 
     void addImages(List<Image> images) {
@@ -58,7 +59,7 @@ class GalleryAdapter extends BaseAdapter {
         int size = parent.getWidth() / ((GridView) parent).getNumColumns();
         if (convertView == null) {
             holder = new ImageHolder();
-            convertView = inflater.inflate(R.layout.image_loading_view, parent, false);
+            convertView = inflater.inflate(R.layout.image_loading_view, null);
             convertView.setLayoutParams(new ViewGroup.LayoutParams(size, size));
             holder.image = (ImageView) convertView.findViewById(R.id.image_image_view);
             holder.progress = (ProgressBar) convertView.findViewById(R.id.image_progress_view);
