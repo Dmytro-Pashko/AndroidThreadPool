@@ -34,7 +34,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
 
     public GalleryControllerImpl() {
         cache = new CacheUtilsImpl(this);
-        images = new ArrayList<Image>();
+        images = new ArrayList<>();
         pool = new TaskPoolExecutor();
         status = ControllerStatus.CREATED;
     }
@@ -127,6 +127,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onDownloadImageError(Image image) {
         image.setStatus(ImageStatus.LOADING_ERROR);
+        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
         Logger.log("Error while downloading Image[%s]", image.getUrl());
     }
 
@@ -146,6 +147,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onSaveCacheError(Image image) {
         image.setStatus(ImageStatus.CACHED_ERROR);
+        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
         Logger.log("Error while saving image %s to cache.", image.getUrl());
     }
 
@@ -165,6 +167,10 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     public void onImageLoadedFromExternalCache(Image image, Bitmap bitmap) {
         if (bitmap != null) {
             cache.saveBitmapToMemoryCache(image, bitmap);
+        }
+        else
+        {
+            image.setStatus(ImageStatus.CACHED_ERROR);
         }
         Logger.log("Image[%s] loaded from external cache.", image.getUrl());
     }

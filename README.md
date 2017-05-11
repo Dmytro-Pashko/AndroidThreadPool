@@ -1,4 +1,4 @@
-#Corgi Gallery
+# Corgi Gallery
 ---
 Corgi Gallery is fast, simple remote gallery for Android based on async work, without dependencies for other 
 library providing lightweight APK file less 100 kb.

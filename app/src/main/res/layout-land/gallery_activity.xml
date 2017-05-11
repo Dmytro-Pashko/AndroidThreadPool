@@ -9,15 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:horizontalSpacing="1dp"
-        android:isScrollContainer="true"
         android:numColumns="@integer/gallery_landscape_column_count"
-        android:overScrollMode="never"
-        android:scrollbarDefaultDelayBeforeFade="2000"
-        android:scrollbarFadeDuration="500"
-        android:scrollingCache="true"
-        android:smoothScrollbar="true"
-        android:splitMotionEvents="false"
+        android:drawSelectorOnTop="true"
+        android:gravity="center"
         android:stretchMode="columnWidth"
+        android:focusable="true"
+        android:clickable="true"
         android:verticalSpacing="1dp" />
 
     <RelativeLayout
