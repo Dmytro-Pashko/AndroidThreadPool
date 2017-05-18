@@ -1,9 +1,7 @@
 package com.goodvin1709.corgigallery.utils.impl;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
-import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
 
@@ -49,17 +47,6 @@ public class CacheUtilsImpl implements CacheUtils {
     public void saveBitmapToMemoryCache(Image image, Bitmap bitmap) {
         imageLruCache.put(image.getUrl(), bitmap);
         handler.onImageCachedToMemory(image);
-    }
-
-    private int getScale(BitmapFactory.Options options, int reqHeight, int reqWidth) {
-        Logger.log("Edited msg.");
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        if (height > width) {
-            return Math.round((float) height / (float) reqHeight);
-        } else {
-            return Math.round((float) width / (float) reqWidth);
-        }
     }
 
     @Override

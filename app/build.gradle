@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    buildToolsVersion '25.0.3'
     defaultConfig {
         applicationId "com.goodvin1709.corgigallery"
         minSdkVersion 19
@@ -18,5 +18,15 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
+
+        gridViewFlavor {
+        }
+        recyclerViewFlavor {
+        }
+    }
+    dependencies {
+        recyclerViewFlavorCompile 'com.android.support:recyclerview-v7:25.3.1'
     }
 }
