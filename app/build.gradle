@@ -7,26 +7,18 @@ android {
         minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
-        versionName "1.5"
+        versionName "1.6"
     }
     buildTypes {
         debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    productFlavors {
-
-        gridViewFlavor {
-        }
-        recyclerViewFlavor {
-        }
-    }
     dependencies {
-        recyclerViewFlavorCompile 'com.android.support:recyclerview-v7:25.3.1'
+        compile 'com.android.support:recyclerview-v7:25.3.1'
     }
 }

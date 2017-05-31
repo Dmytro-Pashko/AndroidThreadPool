@@ -40,11 +40,11 @@ public class ImageLoadTask implements Runnable {
         options.inSampleSize = getScale(options, height, width);
         options.inJustDecodeBounds = false;
         Bitmap bitmap = loadBitmapFromExternalCache(options, image);
-        if (bitmap == null)
-        {
-            Logger.log("Error");
+        if (bitmap == null) {
+            handler.onLoadCacheError(image);
+        } else {
+            handler.onImageLoadedFromExternalCache(image, bitmap);
         }
-        handler.onImageLoadedFromExternalCache(image, bitmap);
     }
 
     private int getScale(BitmapFactory.Options options, int reqHeight, int reqWidth) {

@@ -1,13 +1,19 @@
 package com.goodvin1709.corgigallery.pool.task;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 
 import com.goodvin1709.corgigallery.controller.DownloadListener;
 import com.goodvin1709.corgigallery.model.Image;
+import com.goodvin1709.corgigallery.utils.HashUtils;
 import com.goodvin1709.corgigallery.utils.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -17,8 +23,8 @@ public class ImageDownloadTask implements Runnable {
 
     private static final int CONNECTION_TIMEOUT = 10000;
     private static final long MAX_FILE_SIZE = 4194304 * 2; // 2^23 = 8MB
-    private static final int FREQUENCY_UPDATE_PERCENT = 10;
     private static final int BUFFER_SIZE = 8192;
+    private static final String EXTERNAL_CACHE_DIR = "CorgiGallery";
     private Image image;
     private DownloadListener handler;
 
@@ -52,25 +58,33 @@ public class ImageDownloadTask implements Runnable {
     }
 
     private void readData(URLConnection connection) throws IOException {
-        InputStream inputStream = new BufferedInputStream(connection.getInputStream(), BUFFER_SIZE);
-        ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        int minIncrement = (connection.getContentLength() / 100) * FREQUENCY_UPDATE_PERCENT;
-        int total = 0;
+        InputStream in = new BufferedInputStream(connection.getInputStream(), BUFFER_SIZE);
+        createFile(getImageCacheFile(image));
+        FileOutputStream out = new FileOutputStream(getImageCacheFile(image));
         int count;
-        byte data[] = new byte[connection.getContentLength()];
-        while ((count = inputStream.read(data, 0, minIncrement)) != -1) {
-            total += count;
-            outStream.write(data, 0, count);
-            int progress = (int) ((total * 100f) / connection.getContentLength());
-            onDownloadProgressChanged(progress);
+        byte buffer[] = new byte[BUFFER_SIZE];
+        while ((count = in.read(buffer)) != -1) {
+            out.write(buffer, 0, count);
         }
-        handler.onImageDownloaded(image,
-                BitmapFactory.decodeByteArray(outStream.toByteArray(), 0, data.length));
-        inputStream.close();
-        outStream.close();
+        handler.onImageDownloaded(image);
+        in.close();
+        out.flush();
+        out.close();
     }
 
-    private void onDownloadProgressChanged(int progress) {
-        //Logger.log("Downloading progress changed Image[%s], Progress=%d%%", image.getUrl(), progress);
+    private File getImageCacheFile(Image image) {
+        return new File(Environment.getExternalStorageDirectory() + File.separator + EXTERNAL_CACHE_DIR,
+                HashUtils.md5(image.getUrl()));
     }
+
+    private void createFile(File file) throws IOException {
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdir();
+        }
+        if (file.exists()) {
+            file.delete();
+        }
+        file.createNewFile();
+    }
+
 }

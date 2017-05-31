@@ -8,10 +8,6 @@ public interface CacheListener {
 
     void onImageCachedToMemory(Image image);
 
-    void onImageCachedToExternal(Image image);
-
-    void onSaveCacheError(Image image);
-
     void onLoadCacheError(Image image);
 
     void onImageLoadedFromMemoryCache(Image image);

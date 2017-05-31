@@ -14,6 +14,8 @@
         android:layout_centerVertical="true" />
 
     <ImageView
+        android:visibility="gone"
+        android:adjustViewBounds="true"
         android:id="@+id/image_image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -7,7 +7,6 @@ import android.os.Message;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.GridView;
 import android.widget.RelativeLayout;
 
 import com.goodvin1709.corgigallery.CorgiGallery;
@@ -36,12 +35,12 @@ public class GalleryActivity extends Activity {
         setContentView(R.layout.gallery_activity);
         controller = ((CorgiGallery) getApplicationContext()).getPresenter();
         controller.attachHandler(handler);
+
         galleryView = (RecyclerView) findViewById(R.id.images_grid_container);
-        galleryView.setLayoutManager(new GridLayoutManager(getApplicationContext(),3));
+        galleryView.setLayoutManager(new GridLayoutManager(this, 3));
+
         connectionErrorContainer = (RelativeLayout) findViewById(R.id.connection_error_container);
         downloadDialog = new DownloadDialogImpl(this);
-        galleryAdapter = new GalleryAdapter(this);
-        galleryView.setAdapter(galleryAdapter);
         checkControllerStatus();
     }
 
@@ -56,8 +55,13 @@ public class GalleryActivity extends Activity {
         } else if (controller.isConnectionError()) {
             showConnectionErrorContainer();
         } else if (controller.isListLoaded()) {
-            galleryAdapter.addImages(controller.getImages());
+            setGalleryAdapter();
         }
+    }
+
+    private void setGalleryAdapter() {
+        galleryAdapter = new GalleryAdapter(controller);
+        galleryView.setAdapter(galleryAdapter);
     }
 
     private void showConnectionErrorContainer() {
@@ -88,7 +92,7 @@ public class GalleryActivity extends Activity {
                     showConnectionError();
                     break;
                 case GALLERY_IMAGES_UPDATED:
-                    onImagesUpdated();
+                    onImageUpdated(msg.arg1);
                     break;
                 default:
                     break;
@@ -101,7 +105,7 @@ public class GalleryActivity extends Activity {
 
         private void onDownloadFinished() {
             view.downloadDialog.hide();
-            view.galleryAdapter.addImages(view.controller.getImages());
+            view.setGalleryAdapter();
         }
 
         private void showConnectionError() {
@@ -109,8 +113,10 @@ public class GalleryActivity extends Activity {
             view.showConnectionErrorContainer();
         }
 
-        private void onImagesUpdated() {
-            view.galleryAdapter.notifyDataSetChanged();
+        private void onImageUpdated(int position) {
+            if (position != -1) {
+                view.galleryAdapter.notifyItemChanged(position);
+            }
         }
     }
 }

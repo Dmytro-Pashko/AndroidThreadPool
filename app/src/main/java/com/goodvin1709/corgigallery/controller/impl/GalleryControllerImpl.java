@@ -15,7 +15,6 @@ import com.goodvin1709.corgigallery.pool.TaskPool;
 import com.goodvin1709.corgigallery.pool.impl.TaskPoolExecutor;
 import com.goodvin1709.corgigallery.pool.task.ImageDownloadTask;
 import com.goodvin1709.corgigallery.pool.task.ImageLoadTask;
-import com.goodvin1709.corgigallery.pool.task.ImageSaveTask;
 import com.goodvin1709.corgigallery.pool.task.ListDownloadTask;
 import com.goodvin1709.corgigallery.utils.CacheUtils;
 import com.goodvin1709.corgigallery.utils.Logger;
@@ -119,41 +118,30 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void onImageDownloaded(Image image, Bitmap bitmap) {
+    public void onImageDownloaded(Image image) {
+        image.setStatus(ImageStatus.IDLE);
+        onImageUpdated(image);
         Logger.log("Image[%s] downloaded.", image.getUrl());
-        pool.addTaskToPool(new ImageSaveTask(image, bitmap, this));
     }
 
     @Override
     public void onDownloadImageError(Image image) {
         image.setStatus(ImageStatus.LOADING_ERROR);
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
+        onImageUpdated(image);
         Logger.log("Error while downloading Image[%s]", image.getUrl());
     }
 
     @Override
     public void onImageCachedToMemory(Image image) {
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
-        Logger.log("Image[%s] saved to memory cache.", image.getUrl());
-    }
-
-    @Override
-    public void onImageCachedToExternal(Image image) {
         image.setStatus(ImageStatus.IDLE);
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
-        Logger.log("Image[%s] saved to external cache.", image.getUrl());
-    }
-
-    @Override
-    public void onSaveCacheError(Image image) {
-        image.setStatus(ImageStatus.CACHED_ERROR);
-        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED);
-        Logger.log("Error while saving image %s to cache.", image.getUrl());
+        onImageUpdated(image);
+        Logger.log("Image[%s] saved to memory cache.", image.getUrl());
     }
 
     @Override
     public void onLoadCacheError(Image image) {
         image.setStatus(ImageStatus.CACHED_ERROR);
+        onImageUpdated(image);
         Logger.log("Error while loading Image[%s] from cache.", image.getUrl());
     }
 
@@ -165,14 +153,21 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
 
     @Override
     public void onImageLoadedFromExternalCache(Image image, Bitmap bitmap) {
-        if (bitmap != null) {
-            cache.saveBitmapToMemoryCache(image, bitmap);
-        }
-        else
-        {
-            image.setStatus(ImageStatus.CACHED_ERROR);
-        }
+        cache.saveBitmapToMemoryCache(image, bitmap);
         Logger.log("Image[%s] loaded from external cache.", image.getUrl());
+    }
+
+    private void onImageUpdated(Image image) {
+        showOnView(GalleryActivity.GALLERY_IMAGES_UPDATED, getImagePosition(image), 0);
+    }
+
+    private int getImagePosition(Image image) {
+        for (int i = 0; i < images.size(); i++) {
+            if (images.get(i).getUrl().equals(image.getUrl())) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private void startDownloadImagesList() {
@@ -185,6 +180,12 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     private void showOnView(int msgId) {
         if (handler != null) {
             handler.sendMessage(handler.obtainMessage(msgId));
+        }
+    }
+
+    private void showOnView(int msgId, int arg1, int arg2) {
+        if (handler != null) {
+            handler.sendMessage(handler.obtainMessage(msgId, arg1, arg2));
         }
     }
 }
