@@ -76,11 +76,11 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void loadImage(Image image, ImageView view) {
-        if (cache.isCachedInMemory(image)) {
+    public void loadImage(Image image, int bitmapSize, ImageView view) {
+        if (cache.isCachedInMemory(image, bitmapSize)) {
             loadImageFromMemory(image, view);
         } else if (cache.isCachedInExternal(image)) {
-            loadImageFromExternal(image, view);
+            loadImageFromExternal(image, bitmapSize);
         } else {
             DownloadImage(image);
         }
@@ -90,10 +90,10 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
         cache.loadBitmapFromMemoryCache(image, view);
     }
 
-    private void loadImageFromExternal(Image image, ImageView view) {
+    private void loadImageFromExternal(Image image, int bitmapSize) {
         if (image.getStatus() != ImageStatus.CACHING) {
             image.setStatus(ImageStatus.CACHING);
-            pool.addTaskToPool(new LoadBitmapTask(image, cache.getCacheDir(), view, this));
+            pool.addTaskToPool(new LoadBitmapTask(image, cache.getCacheDir(), bitmapSize, this));
         }
     }
 
@@ -154,8 +154,8 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void onImageLoadedFromExternalCache(Image image, Bitmap bitmap) {
-        cache.saveBitmapToMemoryCache(image, bitmap);
+    public void onImageLoadedFromExternalCache(Image image, int bitmapSize, Bitmap bitmap) {
+        cache.saveBitmapToMemoryCache(image, bitmapSize, bitmap);
         Logger.log("Image[%s] loaded from external cache.", image.getUrl());
     }
 

@@ -45,11 +45,11 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
             holder.progressView.setVisibility(View.GONE);
             holder.imageView.setVisibility(View.VISIBLE);
         } else if (isLoaded(position)) {
-            controller.loadImage(images.get(position), holder.imageView);
+            controller.loadImage(images.get(position), holder.imageSize, holder.imageView);
             holder.progressView.setVisibility(View.GONE);
             holder.imageView.setVisibility(View.VISIBLE);
         } else {
-            controller.loadImage(images.get(position), holder.imageView);
+            controller.loadImage(images.get(position), holder.imageSize, holder.imageView);
         }
     }
 
@@ -67,14 +67,16 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
 
         private ProgressBar progressView;
         private ImageView imageView;
+        private int imageSize;
 
         ImageHolder(View itemView, int imageSize) {
             super(itemView);
+            this.imageSize = imageSize;
             progressView = (ProgressBar) itemView.findViewById(R.id.image_progress_view);
             imageView = (ImageView) itemView.findViewById(R.id.image_image_view);
             itemView.getLayoutParams().height = imageSize;
-            itemView.getLayoutParams().width = imageSize-6;
-            imageView.getLayoutParams().width = imageSize-6;
+            itemView.getLayoutParams().width = imageSize - 6;
+            imageView.getLayoutParams().width = imageSize - 6;
             imageView.getLayoutParams().height = imageSize;
         }
     }

@@ -12,5 +12,5 @@ public interface CacheListener {
 
     void onImageLoadedFromMemoryCache(Image image);
 
-    void onImageLoadedFromExternalCache(Image image, Bitmap bitmap);
+    void onImageLoadedFromExternalCache(Image image, int bitmapSize, Bitmap bitmap);
 }

@@ -9,11 +9,11 @@ import java.io.File;
 
 public interface CacheUtils {
 
-    boolean isCachedInMemory(Image image);
+    boolean isCachedInMemory(Image image , int bitmapSize);
 
     boolean isCachedInExternal(Image image);
 
-    void saveBitmapToMemoryCache(Image image, Bitmap bitmap);
+    void saveBitmapToMemoryCache(Image image, int bitmapSize, Bitmap bitmap);
 
     void loadBitmapFromMemoryCache(Image image, ImageView view);
 

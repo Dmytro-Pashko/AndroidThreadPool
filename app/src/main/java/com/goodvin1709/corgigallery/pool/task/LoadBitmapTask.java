@@ -2,7 +2,6 @@ package com.goodvin1709.corgigallery.pool.task;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.controller.CacheListener;
 import com.goodvin1709.corgigallery.model.Image;
@@ -13,45 +12,43 @@ import java.io.File;
 public class LoadBitmapTask implements Runnable {
 
     private Image image;
-    private int height;
-    private int width;
+    private int bitmapSize;
     private File cacheDir;
     private CacheListener handler;
 
-    public LoadBitmapTask(Image image, File cacheDir, ImageView view, CacheListener handler) {
+    public LoadBitmapTask(Image image, File cacheDir, int bitmapSize, CacheListener handler) {
         this.cacheDir = cacheDir;
         this.image = image;
-        this.height = view.getLayoutParams().height;
-        this.width = view.getLayoutParams().width;
+        this.bitmapSize = bitmapSize;
         this.handler = handler;
     }
 
     @Override
     public void run() {
-        loadBitmap(image, height, width);
+        loadBitmap();
     }
 
-    private void loadBitmap(Image image, int height, int width) {
+    private void loadBitmap() {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         loadBitmapFromExternalCache(options, image);
-        options.inSampleSize = getScale(options, height, width);
+        options.inSampleSize = getScale(options);
         options.inJustDecodeBounds = false;
         Bitmap bitmap = loadBitmapFromExternalCache(options, image);
         if (bitmap == null) {
             handler.onLoadCacheError(image);
         } else {
-            handler.onImageLoadedFromExternalCache(image, bitmap);
+            handler.onImageLoadedFromExternalCache(image, bitmapSize, bitmap);
         }
     }
 
-    private int getScale(BitmapFactory.Options options, int reqHeight, int reqWidth) {
+    private int getScale(BitmapFactory.Options options) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         if (height > width) {
-            return Math.round((float) height / (float) reqHeight);
+            return Math.round((float) height / (float) bitmapSize);
         } else {
-            return Math.round((float) width / (float) reqWidth);
+            return Math.round((float) width / (float) bitmapSize);
         }
     }
 
