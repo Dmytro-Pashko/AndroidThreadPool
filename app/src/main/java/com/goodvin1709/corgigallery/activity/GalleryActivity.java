@@ -37,12 +37,13 @@ public class GalleryActivity extends Activity {
         controller.attachHandler(handler);
 
         galleryView = (RecyclerView) findViewById(R.id.images_grid_container);
-        galleryView.setLayoutManager(new GridLayoutManager(this, 3));
+        galleryView.setLayoutManager(new GridLayoutManager(this, getRowsCount()));
 
         connectionErrorContainer = (RelativeLayout) findViewById(R.id.connection_error_container);
         downloadDialog = new DownloadDialogImpl(this);
         checkControllerStatus();
     }
+
 
     public void onRetryDownloadClicked(View view) {
         hideConnectionErrorContainer();
@@ -60,8 +61,16 @@ public class GalleryActivity extends Activity {
     }
 
     private void setGalleryAdapter() {
-        galleryAdapter = new GalleryAdapter(controller);
+        galleryAdapter = new GalleryAdapter(controller, getRowsCount());
         galleryView.setAdapter(galleryAdapter);
+    }
+
+    private int getRowsCount() {
+        if (getResources().getConfiguration().orientation == 1) {
+            return getResources().getInteger(R.integer.gallery_portrait_column_count);
+        } else {
+            return getResources().getInteger(R.integer.gallery_landscape_column_count);
+        }
     }
 
     private void showConnectionErrorContainer() {

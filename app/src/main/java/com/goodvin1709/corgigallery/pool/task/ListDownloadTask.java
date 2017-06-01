@@ -12,12 +12,13 @@ import java.util.ArrayList;
 
 public class ListDownloadTask implements Runnable {
 
-    private static final String LIST_URL = "https://raw.githubusercontent.com/goodvin1709/AndroidThreadPool/develop/images/list.txt";
     private static final int CONNECTION_TIMEOUT = 5000;
     private static final int READ_TIMEOUT = 5000;
     private DownloadListener handler;
+    private String listURL;
 
-    public ListDownloadTask(DownloadListener handler) {
+    public ListDownloadTask(String listURL, DownloadListener handler) {
+        this.listURL = listURL;
         this.handler = handler;
     }
 
@@ -31,7 +32,7 @@ public class ListDownloadTask implements Runnable {
     }
 
     private void downloadList() throws IOException {
-        URL url = new URL(LIST_URL);
+        URL url = new URL(listURL);
         URLConnection connection = url.openConnection();
         connection.setConnectTimeout(CONNECTION_TIMEOUT);
         connection.setReadTimeout(READ_TIMEOUT);

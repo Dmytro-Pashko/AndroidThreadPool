@@ -18,8 +18,10 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
 
     private GalleryController controller;
     private List<Image> images;
+    private int rowsCount;
 
-    GalleryAdapter(GalleryController controller) {
+    GalleryAdapter(GalleryController controller, int rowsCount) {
+        this.rowsCount = rowsCount;
         this.controller = controller;
         images = controller.getImages();
     }
@@ -28,7 +30,7 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
     public ImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.image_view, parent, false);
-        return new ImageHolder(view, parent.getMeasuredWidth() / 3);
+        return new ImageHolder(view, parent.getMeasuredWidth() / rowsCount);
     }
 
     @Override
@@ -71,8 +73,8 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
             progressView = (ProgressBar) itemView.findViewById(R.id.image_progress_view);
             imageView = (ImageView) itemView.findViewById(R.id.image_image_view);
             itemView.getLayoutParams().height = imageSize;
-            itemView.getLayoutParams().width = imageSize;
-            imageView.getLayoutParams().width = imageSize;
+            itemView.getLayoutParams().width = imageSize-6;
+            imageView.getLayoutParams().width = imageSize-6;
             imageView.getLayoutParams().height = imageSize;
         }
     }

@@ -1,7 +1,7 @@
 package com.goodvin1709.corgigallery.utils.impl;
 
+import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.util.LruCache;
 import android.widget.ImageView;
 
@@ -15,12 +15,13 @@ import java.io.File;
 
 public class CacheUtilsImpl implements CacheUtils {
 
-    private static final String EXTERNAL_CACHE_DIR = "CorgiGallery";
+    private Context context;
     private LruCache<String, Bitmap> imageLruCache;
     private CacheListener handler;
 
-    public CacheUtilsImpl(CacheListener handler) {
+    public CacheUtilsImpl(CacheListener handler, Context context) {
         this.handler = handler;
+        this.context = context;
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 2;
         imageLruCache = new LruCache<String, Bitmap>(cacheSize) {
@@ -39,8 +40,7 @@ public class CacheUtilsImpl implements CacheUtils {
 
     @Override
     public boolean isCachedInExternal(Image image) {
-        return new File(Environment.getExternalStorageDirectory() + File.separator + EXTERNAL_CACHE_DIR,
-                HashUtils.md5(image.getUrl())).exists();
+        return new File(context.getCacheDir(), HashUtils.md5(image.getUrl())).exists();
     }
 
     @Override
@@ -53,5 +53,10 @@ public class CacheUtilsImpl implements CacheUtils {
     public void loadBitmapFromMemoryCache(Image image, ImageView view) {
         view.setImageBitmap(imageLruCache.get(image.getUrl()));
         handler.onImageLoadedFromMemoryCache(image);
+    }
+
+    @Override
+    public File getCacheDir() {
+        return context.getCacheDir();
     }
 }

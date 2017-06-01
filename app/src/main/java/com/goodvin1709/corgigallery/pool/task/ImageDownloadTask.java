@@ -1,18 +1,12 @@
 package com.goodvin1709.corgigallery.pool.task;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
-
 import com.goodvin1709.corgigallery.controller.DownloadListener;
 import com.goodvin1709.corgigallery.model.Image;
 import com.goodvin1709.corgigallery.utils.HashUtils;
 import com.goodvin1709.corgigallery.utils.Logger;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,13 +16,14 @@ import java.net.URLConnection;
 public class ImageDownloadTask implements Runnable {
 
     private static final int CONNECTION_TIMEOUT = 10000;
-    private static final long MAX_FILE_SIZE = 4194304 * 2; // 2^23 = 8MB
+    private static final long MAX_FILE_SIZE = 1 << 23; // 2^23 = 8MB
     private static final int BUFFER_SIZE = 8192;
-    private static final String EXTERNAL_CACHE_DIR = "CorgiGallery";
     private Image image;
+    private File cacheFolder;
     private DownloadListener handler;
 
-    public ImageDownloadTask(Image image, DownloadListener handler) {
+    public ImageDownloadTask(Image image, File cacheFolder, DownloadListener handler) {
+        this.cacheFolder = cacheFolder;
         this.handler = handler;
         this.image = image;
     }
@@ -73,14 +68,10 @@ public class ImageDownloadTask implements Runnable {
     }
 
     private File getImageCacheFile(Image image) {
-        return new File(Environment.getExternalStorageDirectory() + File.separator + EXTERNAL_CACHE_DIR,
-                HashUtils.md5(image.getUrl()));
+        return new File(cacheFolder, HashUtils.md5(image.getUrl()));
     }
 
     private void createFile(File file) throws IOException {
-        if (!file.getParentFile().exists()) {
-            file.getParentFile().mkdir();
-        }
         if (file.exists()) {
             file.delete();
         }

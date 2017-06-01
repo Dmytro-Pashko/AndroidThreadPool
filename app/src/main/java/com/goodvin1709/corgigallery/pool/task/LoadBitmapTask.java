@@ -1,27 +1,25 @@
 package com.goodvin1709.corgigallery.pool.task;
 
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.controller.CacheListener;
 import com.goodvin1709.corgigallery.model.Image;
 import com.goodvin1709.corgigallery.utils.HashUtils;
-import com.goodvin1709.corgigallery.utils.Logger;
 
 import java.io.File;
 
-public class ImageLoadTask implements Runnable {
+public class LoadBitmapTask implements Runnable {
 
-    private static final String EXTERNAL_CACHE_DIR = "CorgiGallery";
     private Image image;
     private int height;
     private int width;
+    private File cacheDir;
     private CacheListener handler;
 
-    public ImageLoadTask(Image image, ImageView view, CacheListener handler) {
+    public LoadBitmapTask(Image image, File cacheDir, ImageView view, CacheListener handler) {
+        this.cacheDir = cacheDir;
         this.image = image;
         this.height = view.getLayoutParams().height;
         this.width = view.getLayoutParams().width;
@@ -63,7 +61,6 @@ public class ImageLoadTask implements Runnable {
     }
 
     private File getImageCacheFile(Image image) {
-        return new File(Environment.getExternalStorageDirectory() + File.separator + EXTERNAL_CACHE_DIR,
-                HashUtils.md5(image.getUrl()));
+        return new File(cacheDir, HashUtils.md5(image.getUrl()));
     }
 }

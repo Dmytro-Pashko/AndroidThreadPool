@@ -7,10 +7,12 @@ import com.goodvin1709.corgigallery.controller.impl.GalleryControllerImpl;
 
 public class CorgiGallery extends Application {
 
-    private final GalleryController presenter;
+    private GalleryController presenter;
 
-    public CorgiGallery() {
-        presenter = new GalleryControllerImpl();
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        presenter = new GalleryControllerImpl(this);
     }
 
     public GalleryController getPresenter() {

@@ -1,5 +1,6 @@
 package com.goodvin1709.corgigallery.controller.impl;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.widget.ImageView;
@@ -14,7 +15,7 @@ import com.goodvin1709.corgigallery.model.ImageStatus;
 import com.goodvin1709.corgigallery.pool.TaskPool;
 import com.goodvin1709.corgigallery.pool.impl.TaskPoolExecutor;
 import com.goodvin1709.corgigallery.pool.task.ImageDownloadTask;
-import com.goodvin1709.corgigallery.pool.task.ImageLoadTask;
+import com.goodvin1709.corgigallery.pool.task.LoadBitmapTask;
 import com.goodvin1709.corgigallery.pool.task.ListDownloadTask;
 import com.goodvin1709.corgigallery.utils.CacheUtils;
 import com.goodvin1709.corgigallery.utils.Logger;
@@ -25,14 +26,15 @@ import java.util.List;
 
 public class GalleryControllerImpl implements GalleryController, DownloadListener, CacheListener {
 
+    private static final String LIST_URL = "https://raw.githubusercontent.com/goodvin1709/AndroidThreadPool/develop/images/list.txt";
     private ControllerStatus status;
     private final TaskPool pool;
     private List<Image> images;
     private Handler handler;
     private CacheUtils cache;
 
-    public GalleryControllerImpl() {
-        cache = new CacheUtilsImpl(this);
+    public GalleryControllerImpl(Context context) {
+        cache = new CacheUtilsImpl(this, context);
         images = new ArrayList<>();
         pool = new TaskPoolExecutor();
         status = ControllerStatus.CREATED;
@@ -91,14 +93,14 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     private void loadImageFromExternal(Image image, ImageView view) {
         if (image.getStatus() != ImageStatus.CACHING) {
             image.setStatus(ImageStatus.CACHING);
-            pool.addTaskToPool(new ImageLoadTask(image, view, this));
+            pool.addTaskToPool(new LoadBitmapTask(image, cache.getCacheDir(), view, this));
         }
     }
 
     private void DownloadImage(Image image) {
         if (image.getStatus() != ImageStatus.LOADING) {
             image.setStatus(ImageStatus.LOADING);
-            pool.addTaskToPool(new ImageDownloadTask(image, this));
+            pool.addTaskToPool(new ImageDownloadTask(image, cache.getCacheDir(), this));
         }
     }
 
@@ -172,7 +174,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
 
     private void startDownloadImagesList() {
         status = ControllerStatus.LOADING;
-        pool.addTaskToPool(new ListDownloadTask(this));
+        pool.addTaskToPool(new ListDownloadTask(LIST_URL, this));
         Logger.log("Started downloading image list.");
         showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
     }

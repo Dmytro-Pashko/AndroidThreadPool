@@ -5,6 +5,8 @@ import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.model.Image;
 
+import java.io.File;
+
 public interface CacheUtils {
 
     boolean isCachedInMemory(Image image);
@@ -14,5 +16,7 @@ public interface CacheUtils {
     void saveBitmapToMemoryCache(Image image, Bitmap bitmap);
 
     void loadBitmapFromMemoryCache(Image image, ImageView view);
+
+    File getCacheDir();
 
 }
