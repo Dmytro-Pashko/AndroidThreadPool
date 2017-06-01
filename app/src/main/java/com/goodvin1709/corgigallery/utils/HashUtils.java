@@ -6,19 +6,21 @@ import java.security.NoSuchAlgorithmException;
 
 public class HashUtils {
 
+    private static final String ALGORITM = "MD5";
+
     public static String md5(String s) {
         try {
-            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            MessageDigest digest = java.security.MessageDigest.getInstance(ALGORITM);
             digest.update(s.getBytes());
             byte messageDigest[] = digest.digest();
-            StringBuffer hexString = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++) {
-                hexString.append(Integer.toHexString(0xFF & messageDigest[i]));
+            StringBuilder hex = new StringBuilder();
+            for (Byte c : messageDigest) {
+                hex.append(Integer.toHexString(0xFF & c));
             }
-            return hexString.toString();
+            return hex.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            Logger.log("Algoritm %s for hashing cached files not found.", ALGORITM);
+            return "";
         }
-        return "";
     }
 }
