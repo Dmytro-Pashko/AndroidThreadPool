@@ -19,8 +19,10 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
     private GalleryController controller;
     private List<Image> images;
     private int rowsCount;
+    private OnImageClickListener clickListener;
 
-    GalleryAdapter(GalleryController controller, int rowsCount) {
+    GalleryAdapter(GalleryController controller, OnImageClickListener listener, int rowsCount) {
+        this.clickListener = listener;
         this.rowsCount = rowsCount;
         this.controller = controller;
         images = controller.getImages();
@@ -78,6 +80,17 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageHolder> {
             itemView.getLayoutParams().width = imageSize - 6;
             imageView.getLayoutParams().width = imageSize - 6;
             imageView.getLayoutParams().height = imageSize;
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.onImageClick(getAdapterPosition());
+                }
+            });
         }
+    }
+
+    interface OnImageClickListener {
+
+        void onImageClick(int position);
     }
 }

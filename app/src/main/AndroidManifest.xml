@@ -6,6 +6,7 @@
     <application
         android:name=".CorgiGallery"
         android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.AppCompat"
         android:label="@string/app_name">
         <activity android:name="com.goodvin1709.corgigallery.activity.GalleryActivity">
             <intent-filter>

@@ -18,15 +18,8 @@ public class CachedBitmap {
         return bitmapSize;
     }
 
-    public void setBitmapSize(int bitmapSize) {
-        this.bitmapSize = bitmapSize;
-    }
-
     public Bitmap getBitmap() {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
-    }
 }

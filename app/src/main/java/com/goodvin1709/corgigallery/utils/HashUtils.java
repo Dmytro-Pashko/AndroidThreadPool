@@ -1,6 +1,5 @@
 package com.goodvin1709.corgigallery.utils;
 
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
