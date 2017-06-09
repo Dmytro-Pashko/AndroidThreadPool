@@ -2,7 +2,6 @@ package com.goodvin1709.corgigallery.utils.impl;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;
-import android.widget.ImageView;
 
 import com.goodvin1709.corgigallery.model.CachedBitmap;
 import com.goodvin1709.corgigallery.model.Image;
@@ -47,8 +46,8 @@ public class CacheUtilsImpl implements CacheUtils {
     }
 
     @Override
-    public void loadBitmapFromMemoryCache(Image image, ImageView view) {
-        view.setImageBitmap(imageLruCache.get(image.getUrl()).getBitmap());
+    public Bitmap loadBitmapFromMemoryCache(Image image) {
+        return imageLruCache.get(image.getUrl()).getBitmap();
     }
 
     @Override

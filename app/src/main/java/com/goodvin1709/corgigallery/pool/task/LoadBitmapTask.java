@@ -3,9 +3,12 @@ package com.goodvin1709.corgigallery.pool.task;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.goodvin1709.corgigallery.controller.CacheListener;
+import com.goodvin1709.corgigallery.controller.ImageLoadingHandler;
 import com.goodvin1709.corgigallery.model.Image;
+import com.goodvin1709.corgigallery.model.ImageStatus;
+import com.goodvin1709.corgigallery.utils.CacheUtils;
 import com.goodvin1709.corgigallery.utils.HashUtils;
+import com.goodvin1709.corgigallery.utils.Logger;
 
 import java.io.File;
 
@@ -13,11 +16,11 @@ public class LoadBitmapTask implements Runnable {
 
     private Image image;
     private int bitmapSize;
-    private File cacheDir;
-    private CacheListener handler;
+    private CacheUtils cache;
+    private ImageLoadingHandler handler;
 
-    public LoadBitmapTask(Image image, File cacheDir, int bitmapSize, CacheListener handler) {
-        this.cacheDir = cacheDir;
+    public LoadBitmapTask(Image image, CacheUtils cache, int bitmapSize, ImageLoadingHandler handler) {
+        this.cache = cache;
         this.image = image;
         this.bitmapSize = bitmapSize;
         this.handler = handler;
@@ -36,9 +39,15 @@ public class LoadBitmapTask implements Runnable {
         options.inJustDecodeBounds = false;
         Bitmap bitmap = loadBitmapFromExternalCache(options, image);
         if (bitmap == null) {
-            handler.onLoadCacheError(image);
+            image.setStatus(ImageStatus.CACHED_ERROR);
+            Logger.log("Error while loading Image[%s] from cache.", image.getUrl());
+            handler.sendMessage(handler.obtainMessage(ImageLoadingHandler.IMAGE_LOADED_FAIL_MSG));
         } else {
-            handler.onImageLoadedFromExternalCache(image, bitmapSize, bitmap);
+            Logger.log("Image[%s] loaded from external cache.", image.getUrl());
+            image.setStatus(ImageStatus.IDLE);
+            cache.saveBitmapToMemoryCache(image, bitmapSize, bitmap);
+            Logger.log("Image[%s] saved to memory cache.", image.getUrl());
+            handler.sendMessage(handler.obtainMessage(ImageLoadingHandler.IMAGE_LOADED_SUCCESS_MSG));
         }
     }
 
@@ -58,6 +67,6 @@ public class LoadBitmapTask implements Runnable {
     }
 
     private File getImageCacheFile(Image image) {
-        return new File(cacheDir, HashUtils.md5(image.getUrl()));
+        return new File(cache.getCacheDir(), HashUtils.md5(image.getUrl()));
     }
 }

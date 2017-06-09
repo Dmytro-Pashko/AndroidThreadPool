@@ -15,7 +15,7 @@ public interface CacheUtils {
 
     void saveBitmapToMemoryCache(Image image, int bitmapSize, Bitmap bitmap);
 
-    void loadBitmapFromMemoryCache(Image image, ImageView view);
+    Bitmap loadBitmapFromMemoryCache(Image image);
 
     File getCacheDir();
 

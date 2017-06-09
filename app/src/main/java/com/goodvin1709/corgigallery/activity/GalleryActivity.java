@@ -22,12 +22,10 @@ public class GalleryActivity extends AppCompatActivity implements GalleryAdapter
     public static final int DOWNLOADING_LIST_STARTED_MSG_ID = 0xfa;
     public static final int DOWNLOADING_LIST_COMPLETE_MSG_ID = 0xfb;
     public static final int CONNECTION_ERROR_MSG_ID = 0xfc;
-    public static final int GALLERY_IMAGES_UPDATED = 0xfe;
     private static final String PAGER_FRAGMENT_TAG = "pager_fragment";
 
     private DownloadDialog downloadDialog;
     private RecyclerView galleryView;
-    private GalleryAdapter galleryAdapter;
     private GalleryController controller;
     private RelativeLayout connectionErrorContainer;
     private final GalleryHandler handler = new GalleryHandler(this);
@@ -83,7 +81,7 @@ public class GalleryActivity extends AppCompatActivity implements GalleryAdapter
     }
 
     private void setGalleryAdapter() {
-        galleryAdapter = new GalleryAdapter(controller, this, getRowsCount());
+        GalleryAdapter galleryAdapter = new GalleryAdapter(controller, this, getRowsCount());
         galleryView.setAdapter(galleryAdapter);
     }
 
@@ -132,9 +130,6 @@ public class GalleryActivity extends AppCompatActivity implements GalleryAdapter
                 case CONNECTION_ERROR_MSG_ID:
                     showConnectionError();
                     break;
-                case GALLERY_IMAGES_UPDATED:
-                    onImageUpdated(msg.arg1);
-                    break;
                 default:
                     break;
             }
@@ -152,12 +147,6 @@ public class GalleryActivity extends AppCompatActivity implements GalleryAdapter
         private void showConnectionError() {
             view.downloadDialog.hide();
             view.showConnectionErrorContainer();
-        }
-
-        private void onImageUpdated(int position) {
-            if (position != -1) {
-                view.galleryAdapter.notifyItemChanged(position);
-            }
         }
     }
 }

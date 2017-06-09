@@ -21,5 +21,5 @@ public interface GalleryController {
 
     List<Image> getImages();
 
-    void loadImage(Image image, int bitmapSize, ImageView view);
+    void loadImage(int position, ImageView view, ImageLoadingHandler handler);
 }

@@ -10,7 +10,5 @@ public interface DownloadListener {
 
     void onDownloadListError();
 
-    void onImageDownloaded(Image image);
-
-    void onDownloadImageError(Image image);
+    void onImageDownloaded(Image image, ImageLoadingHandler handler, int bitmapSize);
 }
