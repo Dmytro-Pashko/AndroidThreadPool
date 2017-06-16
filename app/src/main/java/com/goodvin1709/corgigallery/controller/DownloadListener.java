@@ -12,5 +12,5 @@ public interface DownloadListener {
 
     void onDownloadListError();
 
-    void onImageDownloaded(Image image, ImageView view , LoadingListener listener);
+    void onImageDownloaded(Image image, ImageView view, LoadingListener listener);
 }

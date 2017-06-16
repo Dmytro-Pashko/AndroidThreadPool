@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -14,12 +13,15 @@ import com.goodvin1709.corgigallery.CorgiGallery;
 import com.goodvin1709.corgigallery.R;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 import com.goodvin1709.corgigallery.controller.LoadingListener;
+import com.goodvin1709.corgigallery.model.Image;
+import com.goodvin1709.corgigallery.utils.Logger;
 
-public class ImageFragment extends Fragment implements LoadingListener{
+public class ImageFragment extends Fragment implements LoadingListener {
 
     public static final String IMAGE_POSITION_KEY = "image_position";
-    private ImageView image;
+    private ImageView imageView;
     private ProgressBar progress;
+    private Image image;
     private int position;
     private GalleryController controller;
 
@@ -38,16 +40,16 @@ public class ImageFragment extends Fragment implements LoadingListener{
         View fragment = inflater.inflate(R.layout.image_frament, container, false);
         controller = CorgiGallery.getInstance().getPresenter();
         position = getImagePosition(savedInstanceState);
-        image = (ImageView) fragment.findViewById(R.id.image_fragment_image);
+        image = controller.getImages().get(position);
+        imageView = (ImageView) fragment.findViewById(R.id.image_fragment_image);
         progress = (ProgressBar) fragment.findViewById(R.id.image_fragment_progress);
-        image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                controller.loadImage(position, image, ImageFragment.this);
-            }
-        });
         return fragment;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        controller.loadImage(image, imageView, this);
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
@@ -66,14 +68,15 @@ public class ImageFragment extends Fragment implements LoadingListener{
 
     @Override
     public void onLoadComplete() {
-        image.setVisibility(View.VISIBLE);
+        Logger.log("%s loaded from memory into pager fragment.", image);
+        imageView.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
     }
 
     @Override
     public void onLoadFail() {
-        image.setVisibility(View.VISIBLE);
-        image.setImageResource(R.drawable.ic_broken_image_white);
+        imageView.setVisibility(View.VISIBLE);
+        imageView.setImageResource(R.drawable.ic_broken_image_white);
         progress.setVisibility(View.GONE);
     }
 }

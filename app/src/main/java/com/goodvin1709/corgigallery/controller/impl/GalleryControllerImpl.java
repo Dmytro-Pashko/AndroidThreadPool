@@ -73,23 +73,22 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void loadImage(int position, ImageView view, LoadingListener listener) {
-        Image image = images.get(position);
+    public void loadImage(Image image, ImageView view, LoadingListener listener) {
         if (cache.isCachedInMemory(image, view)) {
             view.setImageBitmap(cache.loadBitmapFromMemoryCache(image));
             listener.onLoadComplete();
         } else if (cache.isCachedInExternal(image)) {
             loadImageFromExternal(image, view, listener);
         } else {
-            downloadImage(image, view , listener);
+            downloadImage(image, view, listener);
         }
     }
 
     @Override
     public void onListDownloaded(List<Image> images) {
         status = ControllerStatus.LOADED;
-        this.images = images;
-        Logger.log("List of Images has been downloaded [%d images].", images.size());
+        this.images = images.subList(0, 4);
+        Logger.log("List of Images has been downloaded [%d images].", this.images.size());
         showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
     }
 
@@ -101,10 +100,9 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void onImageDownloaded(Image image, ImageView view , LoadingListener listener) {
+    public void onImageDownloaded(Image image, ImageView view, LoadingListener listener) {
         image.setStatus(ImageStatus.IDLE);
-        Logger.log("Image[%s] downloaded.", image.getUrl());
-        loadImageFromExternal(image, view , listener);
+        loadImageFromExternal(image, view, listener);
     }
 
     private void startDownloadImagesList() {
@@ -114,14 +112,14 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
         showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
     }
 
-    private void loadImageFromExternal(Image image, ImageView view , LoadingListener listener) {
+    private void loadImageFromExternal(Image image, ImageView view, LoadingListener listener) {
         if (image.getStatus() != ImageStatus.CACHING) {
             image.setStatus(ImageStatus.CACHING);
             pool.addTaskToPool(new LoadBitmapTask(image, cache, view, listener));
         }
     }
 
-    private void downloadImage(Image image, ImageView view , LoadingListener listener) {
+    private void downloadImage(Image image, ImageView view, LoadingListener listener) {
         if (image.getStatus() != ImageStatus.LOADING) {
             image.setStatus(ImageStatus.LOADING);
             pool.addTaskToPool(new ImageDownloadTask(image, cache, view, this, listener));

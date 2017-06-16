@@ -1,5 +1,7 @@
 package com.goodvin1709.corgigallery.model;
 
+import java.util.Locale;
+
 public class Image {
 
     private final String url;
@@ -19,5 +21,10 @@ public class Image {
 
     public void setStatus(ImageStatus status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.ENGLISH, "Image [%s]", url);
     }
 }

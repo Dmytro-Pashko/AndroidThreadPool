@@ -9,7 +9,7 @@ import java.io.File;
 
 public interface CacheUtils {
 
-    boolean isCachedInMemory(Image image , ImageView view);
+    boolean isCachedInMemory(Image image, ImageView view);
 
     boolean isCachedInExternal(Image image);
 

@@ -29,7 +29,7 @@ public class ImageDownloadTask implements Runnable {
     private ImageView view;
     private LoadingListener listener;
 
-    public ImageDownloadTask(Image image, CacheUtils cache, ImageView view, DownloadListener handler ,
+    public ImageDownloadTask(Image image, CacheUtils cache, ImageView view, DownloadListener handler,
                              LoadingListener listener) {
         this.cache = cache;
         this.image = image;
@@ -41,11 +41,12 @@ public class ImageDownloadTask implements Runnable {
     @Override
     public void run() {
         try {
-            Logger.log("Started downloading Image[%s]", image.getUrl());
+            Logger.log("Started downloading %s", image);
             downloadImage();
         } catch (IOException e) {
-            Logger.log("Error while downloading Image[%s]", image.getUrl());
+            Logger.log("Error while downloading %s", image);
             image.setStatus(ImageStatus.LOADING_ERROR);
+            downloadingError();
         }
     }
 
@@ -58,7 +59,9 @@ public class ImageDownloadTask implements Runnable {
         if (length < MAX_FILE_SIZE) {
             readData(connection);
         } else {
-            Logger.log("Download image[%s] cancelled, file size is too long.", image.getUrl());
+            image.setStatus(ImageStatus.LOADING_ERROR);
+            Logger.log("Download %s cancelled, file size is too long.", image);
+            downloadingError();
         }
     }
 
@@ -71,7 +74,8 @@ public class ImageDownloadTask implements Runnable {
         while ((count = in.read(buffer)) != -1) {
             out.write(buffer, 0, count);
         }
-        handler.onImageDownloaded(image, view , listener);
+        Logger.log("%s downloaded.", image);
+        handler.onImageDownloaded(image, view, listener);
         in.close();
         out.flush();
         out.close();
@@ -88,4 +92,13 @@ public class ImageDownloadTask implements Runnable {
         file.createNewFile();
     }
 
+
+    private void downloadingError() {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onLoadFail();
+            }
+        });
+    }
 }

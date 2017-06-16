@@ -41,13 +41,14 @@ public class LoadBitmapTask implements Runnable {
         Bitmap bitmap = loadBitmapFromExternalCache(options, image);
         if (bitmap == null) {
             image.setStatus(ImageStatus.CACHED_ERROR);
-            Logger.log("Error while loading Image[%s] from cache.", image.getUrl());
+            Logger.log("Error while loading %s from cache.", image);
+            downloadingError();
         } else {
-            Logger.log("Image[%s] loaded from external cache.", image.getUrl());
+            Logger.log("%s loaded from external cache.", image);
             image.setStatus(ImageStatus.IDLE);
             cache.saveBitmapToMemoryCache(image, view.getWidth(), bitmap);
-            Logger.log("Image[%s] saved to memory cache.", image.getUrl());
-            setIntoView(bitmap);
+            Logger.log("%s saved to memory cache.", image);
+            setBitmapIntoView(bitmap);
         }
     }
 
@@ -70,12 +71,21 @@ public class LoadBitmapTask implements Runnable {
         return new File(cache.getCacheDir(), HashUtils.md5(image.getUrl()));
     }
 
-    private void setIntoView(final Bitmap bitmap) {
+    private void setBitmapIntoView(final Bitmap bitmap) {
         view.post(new Runnable() {
             @Override
             public void run() {
                 view.setImageBitmap(bitmap);
                 listener.onLoadComplete();
+            }
+        });
+    }
+
+    private void downloadingError() {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                listener.onLoadFail();
             }
         });
     }
