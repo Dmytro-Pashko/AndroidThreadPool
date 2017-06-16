@@ -2,8 +2,9 @@ package com.goodvin1709.corgigallery.pool.task;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.ImageView;
 
-import com.goodvin1709.corgigallery.controller.ImageLoadingHandler;
+import com.goodvin1709.corgigallery.controller.LoadingListener;
 import com.goodvin1709.corgigallery.model.Image;
 import com.goodvin1709.corgigallery.model.ImageStatus;
 import com.goodvin1709.corgigallery.utils.CacheUtils;
@@ -15,15 +16,15 @@ import java.io.File;
 public class LoadBitmapTask implements Runnable {
 
     private Image image;
-    private int bitmapSize;
     private CacheUtils cache;
-    private ImageLoadingHandler handler;
+    private ImageView view;
+    private LoadingListener listener;
 
-    public LoadBitmapTask(Image image, CacheUtils cache, int bitmapSize, ImageLoadingHandler handler) {
+    public LoadBitmapTask(Image image, CacheUtils cache, ImageView view, LoadingListener listener) {
         this.cache = cache;
         this.image = image;
-        this.bitmapSize = bitmapSize;
-        this.handler = handler;
+        this.view = view;
+        this.listener = listener;
     }
 
     @Override
@@ -41,13 +42,12 @@ public class LoadBitmapTask implements Runnable {
         if (bitmap == null) {
             image.setStatus(ImageStatus.CACHED_ERROR);
             Logger.log("Error while loading Image[%s] from cache.", image.getUrl());
-            handler.sendMessage(handler.obtainMessage(ImageLoadingHandler.IMAGE_LOADED_FAIL_MSG));
         } else {
             Logger.log("Image[%s] loaded from external cache.", image.getUrl());
             image.setStatus(ImageStatus.IDLE);
-            cache.saveBitmapToMemoryCache(image, bitmapSize, bitmap);
+            cache.saveBitmapToMemoryCache(image, view.getWidth(), bitmap);
             Logger.log("Image[%s] saved to memory cache.", image.getUrl());
-            handler.sendMessage(handler.obtainMessage(ImageLoadingHandler.IMAGE_LOADED_SUCCESS_MSG));
+            setIntoView(bitmap);
         }
     }
 
@@ -55,9 +55,9 @@ public class LoadBitmapTask implements Runnable {
         final int height = options.outHeight;
         final int width = options.outWidth;
         if (height > width) {
-            return Math.round((float) height / (float) bitmapSize);
+            return Math.round((float) height / (float) view.getWidth());
         } else {
-            return Math.round((float) width / (float) bitmapSize);
+            return Math.round((float) width / (float) view.getWidth());
         }
     }
 
@@ -68,5 +68,15 @@ public class LoadBitmapTask implements Runnable {
 
     private File getImageCacheFile(Image image) {
         return new File(cache.getCacheDir(), HashUtils.md5(image.getUrl()));
+    }
+
+    private void setIntoView(final Bitmap bitmap) {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                view.setImageBitmap(bitmap);
+                listener.onLoadComplete();
+            }
+        });
     }
 }

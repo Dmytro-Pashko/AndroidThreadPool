@@ -3,7 +3,6 @@ package com.goodvin1709.corgigallery.activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,22 +33,13 @@ public class GalleryActivity extends AppCompatActivity implements GalleryAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gallery_activity);
-        controller = ((CorgiGallery) getApplicationContext()).getPresenter();
+        controller = CorgiGallery.getInstance().getPresenter();
         controller.attachHandler(handler);
         galleryView = (RecyclerView) findViewById(R.id.images_grid_container);
         galleryView.setLayoutManager(new GridLayoutManager(this, getRowsCount()));
         connectionErrorContainer = (RelativeLayout) findViewById(R.id.connection_error_container);
         downloadDialog = new DownloadDialogImpl(this);
         checkControllerStatus();
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (isPagerShowed()) {
-            hideImagePager();
-        } else {
-            super.onBackPressed();
-        }
     }
 
     @Override
@@ -85,21 +75,11 @@ public class GalleryActivity extends AppCompatActivity implements GalleryAdapter
         galleryView.setAdapter(galleryAdapter);
     }
 
-    private boolean isPagerShowed() {
-        return getSupportFragmentManager().findFragmentByTag(PAGER_FRAGMENT_TAG) != null;
-    }
-
     private void showImagePager(int position) {
         PagerFragment pagerFragment = PagerFragment.getInstance(position);
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.pager_fragment_container, pagerFragment, PAGER_FRAGMENT_TAG)
-                .commit();
-    }
-
-    private void hideImagePager() {
-        Fragment pagerFragment = getSupportFragmentManager().findFragmentByTag(PAGER_FRAGMENT_TAG);
-        getSupportFragmentManager().beginTransaction()
-                .remove(pagerFragment)
+                .addToBackStack(null)
                 .commit();
     }
 

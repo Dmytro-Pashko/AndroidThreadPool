@@ -1,5 +1,7 @@
 package com.goodvin1709.corgigallery.controller;
 
+import android.widget.ImageView;
+
 import com.goodvin1709.corgigallery.model.Image;
 
 import java.util.List;
@@ -10,5 +12,5 @@ public interface DownloadListener {
 
     void onDownloadListError();
 
-    void onImageDownloaded(Image image, ImageLoadingHandler handler, int bitmapSize);
+    void onImageDownloaded(Image image, ImageView view , LoadingListener listener);
 }

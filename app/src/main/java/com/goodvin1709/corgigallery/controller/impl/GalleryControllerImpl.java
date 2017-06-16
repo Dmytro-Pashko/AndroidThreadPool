@@ -7,7 +7,7 @@ import com.goodvin1709.corgigallery.activity.GalleryActivity;
 import com.goodvin1709.corgigallery.controller.ControllerStatus;
 import com.goodvin1709.corgigallery.controller.DownloadListener;
 import com.goodvin1709.corgigallery.controller.GalleryController;
-import com.goodvin1709.corgigallery.controller.ImageLoadingHandler;
+import com.goodvin1709.corgigallery.controller.LoadingListener;
 import com.goodvin1709.corgigallery.model.Image;
 import com.goodvin1709.corgigallery.model.ImageStatus;
 import com.goodvin1709.corgigallery.pool.TaskPool;
@@ -32,9 +32,9 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
 
     public GalleryControllerImpl(CacheUtils cache) {
         this.cache = cache;
-        images = new ArrayList<>();
-        pool = new TaskPoolExecutor();
-        status = ControllerStatus.CREATED;
+        this.images = new ArrayList<>();
+        this.pool = new TaskPoolExecutor();
+        this.status = ControllerStatus.CREATED;
     }
 
     @Override
@@ -73,21 +73,22 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void loadImage(int position, ImageView view, ImageLoadingHandler handler) {
+    public void loadImage(int position, ImageView view, LoadingListener listener) {
         Image image = images.get(position);
-        if (cache.isCachedInMemory(image, view.getWidth())) {
+        if (cache.isCachedInMemory(image, view)) {
             view.setImageBitmap(cache.loadBitmapFromMemoryCache(image));
+            listener.onLoadComplete();
         } else if (cache.isCachedInExternal(image)) {
-            loadImageFromExternal(image, view.getWidth(), handler);
+            loadImageFromExternal(image, view, listener);
         } else {
-            downloadImage(image, view.getWidth(), handler);
+            downloadImage(image, view , listener);
         }
     }
 
     @Override
     public void onListDownloaded(List<Image> images) {
         status = ControllerStatus.LOADED;
-        this.images = images.subList(0,4);
+        this.images = images;
         Logger.log("List of Images has been downloaded [%d images].", images.size());
         showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
     }
@@ -100,10 +101,10 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     }
 
     @Override
-    public void onImageDownloaded(Image image, ImageLoadingHandler handler, int bitmapSize) {
+    public void onImageDownloaded(Image image, ImageView view , LoadingListener listener) {
         image.setStatus(ImageStatus.IDLE);
         Logger.log("Image[%s] downloaded.", image.getUrl());
-        loadImageFromExternal(image, bitmapSize, handler);
+        loadImageFromExternal(image, view , listener);
     }
 
     private void startDownloadImagesList() {
@@ -113,17 +114,17 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
         showOnView(GalleryActivity.DOWNLOADING_LIST_STARTED_MSG_ID);
     }
 
-    private void loadImageFromExternal(Image image, int bitmapSize, ImageLoadingHandler handler) {
+    private void loadImageFromExternal(Image image, ImageView view , LoadingListener listener) {
         if (image.getStatus() != ImageStatus.CACHING) {
             image.setStatus(ImageStatus.CACHING);
-            pool.addTaskToPool(new LoadBitmapTask(image, cache, bitmapSize, handler));
+            pool.addTaskToPool(new LoadBitmapTask(image, cache, view, listener));
         }
     }
 
-    private void downloadImage(Image image, int bitmapSize, ImageLoadingHandler handler) {
+    private void downloadImage(Image image, ImageView view , LoadingListener listener) {
         if (image.getStatus() != ImageStatus.LOADING) {
             image.setStatus(ImageStatus.LOADING);
-            pool.addTaskToPool(new ImageDownloadTask(image, bitmapSize, cache, this, handler));
+            pool.addTaskToPool(new ImageDownloadTask(image, cache, view, this, listener));
         }
     }
 

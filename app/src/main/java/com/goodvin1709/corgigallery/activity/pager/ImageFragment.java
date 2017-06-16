@@ -8,20 +8,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.goodvin1709.corgigallery.CorgiGallery;
 import com.goodvin1709.corgigallery.R;
 import com.goodvin1709.corgigallery.controller.GalleryController;
-import com.goodvin1709.corgigallery.controller.ImageLoadingHandler;
 import com.goodvin1709.corgigallery.controller.LoadingListener;
 
-public class ImageFragment extends Fragment implements LoadingListener {
+public class ImageFragment extends Fragment implements LoadingListener{
 
     public static final String IMAGE_POSITION_KEY = "image_position";
     private ImageView image;
+    private ProgressBar progress;
     private int position;
     private GalleryController controller;
-    private final ImageLoadingHandler loadHandler = new ImageLoadingHandler(this);
 
     public static ImageFragment getInstance(int position) {
         ImageFragment fragment = new ImageFragment();
@@ -36,15 +36,15 @@ public class ImageFragment extends Fragment implements LoadingListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              Bundle savedInstanceState) {
         View fragment = inflater.inflate(R.layout.image_frament, container, false);
-        controller = ((CorgiGallery) getActivity().getApplicationContext()).getPresenter();
+        controller = CorgiGallery.getInstance().getPresenter();
         position = getImagePosition(savedInstanceState);
         image = (ImageView) fragment.findViewById(R.id.image_fragment_image);
-        image.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+        progress = (ProgressBar) fragment.findViewById(R.id.image_fragment_progress);
+        image.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public boolean onPreDraw() {
-                image.getViewTreeObserver().removeOnPreDrawListener(this);
-                loadImage();
-                return false;
+            public void onGlobalLayout() {
+                image.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                controller.loadImage(position, image, ImageFragment.this);
             }
         });
         return fragment;
@@ -56,16 +56,6 @@ public class ImageFragment extends Fragment implements LoadingListener {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onLoadComplete() {
-        loadImage();
-    }
-
-    @Override
-    public void onLoadFail() {
-        setBrokenImage();
-    }
-
     private int getImagePosition(Bundle savedInstanceState) {
         if (savedInstanceState == null) {
             return getArguments().getInt(IMAGE_POSITION_KEY);
@@ -74,11 +64,16 @@ public class ImageFragment extends Fragment implements LoadingListener {
         }
     }
 
-    private void loadImage() {
-        controller.loadImage(position, image, loadHandler);
+    @Override
+    public void onLoadComplete() {
+        image.setVisibility(View.VISIBLE);
+        progress.setVisibility(View.GONE);
     }
 
-    private void setBrokenImage() {
+    @Override
+    public void onLoadFail() {
+        image.setVisibility(View.VISIBLE);
         image.setImageResource(R.drawable.ic_broken_image_white);
+        progress.setVisibility(View.GONE);
     }
 }

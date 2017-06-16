@@ -8,11 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.goodvin1709.corgigallery.CorgiGallery;
 import com.goodvin1709.corgigallery.R;
-import com.goodvin1709.corgigallery.model.Image;
-
-import java.util.List;
 
 public class PagerFragment extends Fragment {
 
@@ -34,14 +30,10 @@ public class PagerFragment extends Fragment {
         View fragment = inflater.inflate(R.layout.pager_fragment, container, false);
         imagePosition = getImagePosition(savedInstanceState);
         ViewPager pagerView = (ViewPager) fragment.findViewById(R.id.image_fragment_pager);
-        ImagePagerAdapter pagerAdapter = new ImagePagerAdapter(getFragmentManager(), getImageList());
+        ImagePagerAdapter pagerAdapter = new ImagePagerAdapter(getFragmentManager());
         pagerView.setAdapter(pagerAdapter);
         pagerView.setCurrentItem(imagePosition);
         return fragment;
-    }
-
-    private List<Image> getImageList() {
-        return ((CorgiGallery) getActivity().getApplicationContext()).getPresenter().getImages();
     }
 
     private int getImagePosition(Bundle savedInstanceState) {

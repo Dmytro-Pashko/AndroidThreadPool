@@ -1,7 +1,9 @@
 package com.goodvin1709.corgigallery.pool.task;
 
+import android.widget.ImageView;
+
 import com.goodvin1709.corgigallery.controller.DownloadListener;
-import com.goodvin1709.corgigallery.controller.ImageLoadingHandler;
+import com.goodvin1709.corgigallery.controller.LoadingListener;
 import com.goodvin1709.corgigallery.model.Image;
 import com.goodvin1709.corgigallery.model.ImageStatus;
 import com.goodvin1709.corgigallery.utils.CacheUtils;
@@ -22,18 +24,18 @@ public class ImageDownloadTask implements Runnable {
     private static final long MAX_FILE_SIZE = 1 << 23; // 2^23 = 8MB
     private static final int BUFFER_SIZE = 8192;
     private Image image;
-    private int bitmapSize;
     private CacheUtils cache;
-    private DownloadListener controllerHandler;
-    private ImageLoadingHandler viewHandler;
+    private DownloadListener handler;
+    private ImageView view;
+    private LoadingListener listener;
 
-    public ImageDownloadTask(Image image, int bitmapSize, CacheUtils cache, DownloadListener handler,
-                             ImageLoadingHandler viewListener) {
-        this.bitmapSize = bitmapSize;
+    public ImageDownloadTask(Image image, CacheUtils cache, ImageView view, DownloadListener handler ,
+                             LoadingListener listener) {
         this.cache = cache;
-        this.controllerHandler = handler;
         this.image = image;
-        this.viewHandler = viewListener;
+        this.handler = handler;
+        this.view = view;
+        this.listener = listener;
     }
 
     @Override
@@ -44,7 +46,6 @@ public class ImageDownloadTask implements Runnable {
         } catch (IOException e) {
             Logger.log("Error while downloading Image[%s]", image.getUrl());
             image.setStatus(ImageStatus.LOADING_ERROR);
-            viewHandler.sendMessage(viewHandler.obtainMessage(ImageLoadingHandler.IMAGE_LOADED_FAIL_MSG));
         }
     }
 
@@ -58,7 +59,6 @@ public class ImageDownloadTask implements Runnable {
             readData(connection);
         } else {
             Logger.log("Download image[%s] cancelled, file size is too long.", image.getUrl());
-            viewHandler.sendMessage(viewHandler.obtainMessage(ImageLoadingHandler.IMAGE_LOADED_FAIL_MSG));
         }
     }
 
@@ -71,7 +71,7 @@ public class ImageDownloadTask implements Runnable {
         while ((count = in.read(buffer)) != -1) {
             out.write(buffer, 0, count);
         }
-        controllerHandler.onImageDownloaded(image, viewHandler, bitmapSize);
+        handler.onImageDownloaded(image, view , listener);
         in.close();
         out.flush();
         out.close();

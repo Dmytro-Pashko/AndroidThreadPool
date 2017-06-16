@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.goodvin1709.corgigallery.CorgiGallery;
 import com.goodvin1709.corgigallery.model.Image;
 
 import java.util.List;
@@ -12,9 +13,13 @@ class ImagePagerAdapter extends FragmentStatePagerAdapter {
 
     private List<Image> images;
 
-    ImagePagerAdapter(FragmentManager fm, List<Image> images) {
+    ImagePagerAdapter(FragmentManager fm) {
         super(fm);
-        this.images = images;
+        images = getImages();
+    }
+
+    private List<Image> getImages() {
+        return CorgiGallery.getInstance().getPresenter().getImages();
     }
 
     @Override
