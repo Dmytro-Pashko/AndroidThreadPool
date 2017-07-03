@@ -55,9 +55,4 @@ public class GalleryImageView extends AppCompatImageView {
             controller.loadImage(image, this, loadingListener);
         }
     }
-
-    protected void onDetachedFromWindow() {
-        controller = null;
-        super.onDetachedFromWindow();
-    }
 }
