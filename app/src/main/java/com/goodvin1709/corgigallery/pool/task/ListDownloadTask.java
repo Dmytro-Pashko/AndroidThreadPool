@@ -39,7 +39,7 @@ public class ListDownloadTask implements Runnable {
         connection.setUseCaches(false);
         connection.connect();
         BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        ArrayList<Image> list = new ArrayList<Image>();
+        ArrayList<Image> list = new ArrayList<>();
         String line;
         while ((line = input.readLine()) != null) {
             list.add(new Image(line));

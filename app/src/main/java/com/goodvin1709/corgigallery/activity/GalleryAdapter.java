@@ -9,7 +9,6 @@ import com.goodvin1709.corgigallery.R;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 import com.goodvin1709.corgigallery.controller.LoadingListener;
 import com.goodvin1709.corgigallery.model.Image;
-import com.goodvin1709.corgigallery.utils.Logger;
 
 import java.util.List;
 
@@ -42,10 +41,9 @@ class GalleryAdapter extends RecyclerView.Adapter<GalleryImageHolder> {
     @Override
     public void onBindViewHolder(final GalleryImageHolder holder, int position) {
         final Image image = images.get(position);
-        controller.loadImage(image, holder.imageView, new LoadingListener() {
+        holder.imageView.setImageUrl(image,controller,new LoadingListener() {
             @Override
             public void onLoadComplete() {
-                Logger.log("%s loaded from memory into recycler view.", image);
                 holder.imageView.setVisibility(View.VISIBLE);
                 holder.progressView.setVisibility(View.GONE);
             }

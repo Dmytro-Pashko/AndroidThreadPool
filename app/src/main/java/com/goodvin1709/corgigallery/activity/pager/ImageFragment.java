@@ -6,20 +6,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.goodvin1709.corgigallery.CorgiGallery;
 import com.goodvin1709.corgigallery.R;
+import com.goodvin1709.corgigallery.activity.GalleryImageView;
 import com.goodvin1709.corgigallery.controller.GalleryController;
 import com.goodvin1709.corgigallery.controller.LoadingListener;
 import com.goodvin1709.corgigallery.model.Image;
-import com.goodvin1709.corgigallery.utils.Logger;
 
 public class ImageFragment extends Fragment implements LoadingListener {
 
     public static final String IMAGE_POSITION_KEY = "image_position";
-    private ImageView imageView;
+    private GalleryImageView imageView;
     private ProgressBar progress;
     private Image image;
     private int position;
@@ -41,14 +40,14 @@ public class ImageFragment extends Fragment implements LoadingListener {
         controller = CorgiGallery.getInstance().getPresenter();
         position = getImagePosition(savedInstanceState);
         image = controller.getImages().get(position);
-        imageView = (ImageView) fragment.findViewById(R.id.image_fragment_image);
+        imageView = (GalleryImageView) fragment.findViewById(R.id.image_fragment_image);
         progress = (ProgressBar) fragment.findViewById(R.id.image_fragment_progress);
         return fragment;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        controller.loadImage(image, imageView, this);
+        imageView.setImageUrl(image,controller,this);
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -68,7 +67,6 @@ public class ImageFragment extends Fragment implements LoadingListener {
 
     @Override
     public void onLoadComplete() {
-        Logger.log("%s loaded from memory into pager fragment.", image);
         imageView.setVisibility(View.VISIBLE);
         progress.setVisibility(View.GONE);
     }

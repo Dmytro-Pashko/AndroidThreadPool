@@ -7,11 +7,13 @@ public class HashUtils {
 
     private static final String ALGORITM = "MD5";
 
+    private HashUtils(){}
+
     public static String md5(String s) {
         try {
             MessageDigest digest = java.security.MessageDigest.getInstance(ALGORITM);
             digest.update(s.getBytes());
-            byte messageDigest[] = digest.digest();
+            byte[] messageDigest = digest.digest();
             StringBuilder hex = new StringBuilder();
             for (Byte c : messageDigest) {
                 hex.append(Integer.toHexString(0xFF & c));

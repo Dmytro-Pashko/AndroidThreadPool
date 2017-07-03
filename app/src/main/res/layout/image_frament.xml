@@ -5,11 +5,11 @@
     android:background="@android:color/black"
     android:orientation="vertical">
 
-    <ImageView
+    <com.goodvin1709.corgigallery.activity.GalleryImageView
         android:id="@+id/image_fragment_image"
         android:layout_width="match_parent"
         android:visibility="invisible"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_centerVertical="true" />
 
     <ProgressBar

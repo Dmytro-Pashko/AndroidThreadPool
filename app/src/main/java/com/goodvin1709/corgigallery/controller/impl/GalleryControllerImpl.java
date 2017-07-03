@@ -87,7 +87,7 @@ public class GalleryControllerImpl implements GalleryController, DownloadListene
     @Override
     public void onListDownloaded(List<Image> images) {
         status = ControllerStatus.LOADED;
-        this.images = images.subList(0, 4);
+        this.images = images;
         Logger.log("List of Images has been downloaded [%d images].", this.images.size());
         showOnView(GalleryActivity.DOWNLOADING_LIST_COMPLETE_MSG_ID);
     }

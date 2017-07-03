@@ -67,31 +67,40 @@ public class ImageDownloadTask implements Runnable {
 
     private void readData(URLConnection connection) throws IOException {
         InputStream in = new BufferedInputStream(connection.getInputStream(), BUFFER_SIZE);
-        createFile(getImageCacheFile(image));
+        checkFile(getImageCacheFile(image));
         FileOutputStream out = new FileOutputStream(getImageCacheFile(image));
         int count;
-        byte buffer[] = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[BUFFER_SIZE];
         while ((count = in.read(buffer)) != -1) {
             out.write(buffer, 0, count);
         }
         Logger.log("%s downloaded.", image);
-        handler.onImageDownloaded(image, view, listener);
         in.close();
         out.flush();
         out.close();
+        handler.onImageDownloaded(image, view, listener);
     }
 
     private File getImageCacheFile(Image image) {
         return new File(cache.getCacheDir(), HashUtils.md5(image.getUrl()));
     }
 
-    private void createFile(File file) throws IOException {
-        if (file.exists()) {
-            file.delete();
-        }
-        file.createNewFile();
+    private void checkFile(File file) throws IOException {
+        deleteFileIfExist(file);
+        createNewFile(file);
     }
 
+    private void deleteFileIfExist(File file) {
+        if (file.exists() && !file.delete()) {
+            Logger.log("Error during deleting file [%s]", file.getName());
+        }
+    }
+
+    private void createNewFile(File file) throws IOException {
+        if (!file.createNewFile()) {
+            Logger.log("Error during creating file [%s]", file.getName());
+        }
+    }
 
     private void downloadingError() {
         view.post(new Runnable() {
